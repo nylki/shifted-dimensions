@@ -6,7 +6,6 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "concurrently -k \"browser-sync start --no-open --reload-delay 1000 --server 'dist' --files dist\" \"watch 'npm run rollup' -d -p /dist/ --interval=2 --wait=6\"",
-    "webpack": "mkdir -p dist && webpack --config webpack.config.js && cp index.html dist/index.html",
     "rollup": "mkdir -p dist && rollup -c && cp index.html dist/index.html",
     "minify": "uglifyjs ./dist/index.js --compress --mangle -o ./dist/index.js && cp index.html dist/index.html"
   },
@@ -26,7 +25,6 @@
     "concurrently": "^3.5.0",
     "rollup": "^0.48.2",
     "uglify-es": "^3.0.28",
-    "watch": "^1.0.2",
-    "webpack": "^3.5.5"
+    "watch": "^1.0.2"
   }
 }
