@@ -7,11 +7,10 @@
 export {pseudoPhysicsSystem, physicsBodyComponent};
 
 
-
 let pseudoPhysicsSystem = AFRAME.registerSystem('pseudo-physics', {
   schema: {
     gravity: {type: 'vec3', default: new THREE.Vector3(0, -0.001, 0)}
-  },  // System schema. Parses into `this.data`.
+  },
   init: function () {
     this.children = [];
     this.colliders = [];
@@ -71,8 +70,11 @@ let pseudoPhysicsSystem = AFRAME.registerSystem('pseudo-physics', {
     }
   }
   
-  // Other handlers and methods.
 });
+
+
+
+
 
 let physicsBodyComponent = AFRAME.registerComponent('physics-body', {
   schema: {
@@ -94,10 +96,8 @@ let physicsBodyComponent = AFRAME.registerComponent('physics-body', {
     this.system.add(this);
   },
   tick: function () {
-
       this.boundingBox.setFromObject(this.el.object3D);
       this.boundingBoxSize = this.boundingBox.getSize();
-    
   },
   remove: function () {
     this.system.remove(this);
