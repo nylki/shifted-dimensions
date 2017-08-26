@@ -1,0 +1,16 @@
+
+<!doctype html>
+<head>
+	<title>js13k lost</title>
+	<script src="https://aframe.io/releases/0.6.1/aframe.min.js"></script>
+	<script src="index.js"></script>
+</head>
+<body>
+	<a-scene game-state pseudo-physics>
+		<a-entity id="leftHand" hand-controls="left"></a-entity>
+		<a-entity id="rightHand" hand-controls="right"></a-entity>
+		<a-box physics-body="mass:0.8; collidesAgainst:true" position="-1 0.5 -3" rotation="60 -60 0" color="#4c67d9"></a-box>
+		
+		<a-box physics-body="mass:0; collidesOthers:true" scale="10 0.1 10" position="-1 -5 -3" rotation="0 0 0" color="#d97f4c"></a-box>
+	</a-scene>
+</body>
