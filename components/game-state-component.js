@@ -13,6 +13,7 @@ let gameStateSystem = AFRAME.registerSystem('game-state', {
   },
   init: function () {
 
+    
   },
   tick: function () {
 

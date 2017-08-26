@@ -7,6 +7,7 @@
 export {pseudoPhysicsSystem, physicsBodyComponent};
 
 
+
 let pseudoPhysicsSystem = AFRAME.registerSystem('pseudo-physics', {
   schema: {
     gravity: {type: 'vec3', default: new THREE.Vector3(0, -0.001, 0)}
@@ -15,31 +16,43 @@ let pseudoPhysicsSystem = AFRAME.registerSystem('pseudo-physics', {
     this.children = [];
     this.colliders = [];
     this.futurePos = new THREE.Vector3();
-    this.futureBBox = new THREE.Box3();
+    this.futureChildBox = new THREE.Box3();
+    this.futureColliderBox = new THREE.Box3();
     this.futureBSphere = new THREE.Sphere();
   },
   tick: function () {
     for (let child of this.children) {
       child.acceleration.multiplyScalar(0).add(this.data.gravity).multiplyScalar(child.data.mass);
-      
       child.velocity.add(child.acceleration);
-      futurePos.add(child.velocity);
+      this.futurePos.copy(child.el.object3D.position).add(child.velocity);
       
       
       // Check for collision
-      if(child.data.collidesSelf) {
-        console.log(child);
-        // this.futureBBox.setFromCenterAndSize(futurePos, child.bboxSize);
-        // for (let collider of this.colliders) {
-        //   if(this.futureBBox.intersectsBox(collider.object3D.geometry.boundingBox)) {
-        //
-        //   }
-        // }
+      if(child.data.collidesAgainst) {
+        this.futureChildBox.setFromCenterAndSize(this.futurePos, child.boundingBoxSize);
+
+        for (let collider of this.colliders) {
+          // console.log(JSON.stringify(this.futureColliderBox));
+          if(this.futureChildBox.intersectsBox(collider.boundingBox)) {
+            
+            // more bogus physics: let the object bounce in opposite dir with 1/5 of speed
+            child.velocity.multiplyScalar(-0.5);
+            
+            // avoid constant wobbling in collision situations
+            if(child.velocity.length() < 0.001) child.velocity.set(0,0,0);
+            // console.log(child.velocity.length());
+            
+          }
+
+          this.futurePos.copy(child.el.object3D.position).add(child.velocity);
+          child.el.setAttribute('position', this.futurePos);
+        }
       }
+      
       
 
       
-      child.el.setAttribute('position', futurePos);
+      
 
     }
   },
@@ -75,11 +88,16 @@ let physicsBodyComponent = AFRAME.registerComponent('physics-body', {
     this.acceleration = new THREE.Vector3(0,0,0);
     this.sceneEl = document.querySelector('a-scene');
     this.system = this.sceneEl.systems['pseudo-physics'];
-    console.log(this);
     this.boundingBox = new THREE.Box3().setFromObject(this.el.object3D);
-    this.boundingSphere = new THREE.Sphere().setFromObject(this.el.object3D);
-    this.bboxSize = this.object3D.geometry.boundingBox.getSize();
+    // this.boundingSphere = new THREE.Sphere().setFromObject(this.el.object3D);
+    this.boundingBoxSize = this.boundingBox.getSize();
     this.system.add(this);
+  },
+  tick: function () {
+
+      this.boundingBox.setFromObject(this.el.object3D);
+      this.boundingBoxSize = this.boundingBox.getSize();
+    
   },
   remove: function () {
     this.system.remove(this);
