@@ -5,10 +5,12 @@
 	<script src="https://aframe.io/releases/0.6.1/aframe.min.js"></script>
 	<script src="index.js"></script>
 </head>
+<meta charset="utf-8"/>
 <body>
 	<a-scene debug stats game-state pseudo-physics>
+		<a-entity id="camera" camera wasd-controls look-controls></a-entity>
 		<a-entity id="laser" laser-controls="hand: right;" raycaster="far: 10; interval:200" magic-light></a-entity>
-		<!-- <a-entity id="leftHand" hand-controls="left"> -->
+		
 		
 		
 		<!-- TODO: Baue Labyrinth in dem lostStone ist um Interaktion zu testen
@@ -17,14 +19,16 @@
 								lostStone ist nur unter dem magic light sichtbar, hat sound
 	 	-->
 		
-			<a-box  physics-body="mass:0.0; collidesOthers:true" depth="5" height="0.1" width="5" position="0 0 -3" rotation="0 0 0" color="#d97f4c"></a-box>
-			<a-box physics-body="mass:0.0; collidesOthers:true" depth="5" height="5" width="0.1" position="-2.5 0 -3" rotation="0 0 0" color="#d97f4c"></a-box>
-			<a-box physics-body="mass:0.0; collidesOthers:true" depth="5" height="5" width="0.1" position="2.5 0 -3" rotation="0 0 0" color="#d97f4c"></a-box>
-			<a-box labyrinth-material="color:#ff0000" physics-body="mass:0.0; collidesOthers:true" depth="0.5" height="5" width="1" position="0 0 -1.5" rotation="0 0 0"></a-box>
+			<a-box  labyrinth-material physics-body="mass:0.0; collidesOthers:true" depth="5" height="0.1" width="5" position="0 -0.5 -3" rotation="0 0 0" color="#d97f4c"></a-box>
+			<a-box labyrinth-material physics-body="mass:0.0; collidesOthers:true" depth="5" height="5" width="0.1" position="-2.5 0 -3" rotation="0 0 0" color="#d97f4c"></a-box>
+			<a-box labyrinth-material physics-body="mass:0.0; collidesOthers:true" depth="5" height="5" width="0.1" position="2.5 0 -3" rotation="0 0 0" color="#d97f4c"></a-box>
 			
-		<!-- </a-entity> -->
+			<!-- <a-entity id="leftHand" hand-controls="left"> -->
+			<a-box labyrinth-material="color:#ff0000" physics-body="mass:0.0; collidesOthers:true" depth="0.5" height="5" width="1" position="-2 -0.5 -1.5" rotation="0 0 0"></a-box>
+			
+	
 		
-		<a-box id="lostStone" physics-body="mass:0.5; collidesAgainst:true" scale="0.5 0.5 0.5" position="0 6 -3" rotation="0 0 0" color="#4c67d9"></a-box>
+		<a-box id="lostStone" labyrinth-material physics-body="mass:0.5; collidesAgainst:true" scale="0.5 0.5 0.5" position="0 6 -3" rotation="0 0 0"></a-box>
 		
 		
 
