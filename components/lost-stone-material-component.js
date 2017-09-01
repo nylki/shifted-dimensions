@@ -1,4 +1,4 @@
-export {labyrinthMaterial};
+export {lostStoneMaterial};
 
 const vertexShader = `
 
@@ -18,7 +18,6 @@ const fragmentShader = `
 
 #define PI 3.1415926538
 
-uniform vec3 color;
 uniform float u_time;
 uniform vec2 u_resolution;
 uniform vec3 u_controllerPos;
@@ -40,12 +39,15 @@ void main(void)
   float dot = dot(u_controllerLookDir, controllerDir);
   float angle = acos(dot) / PI;
   
-	gl_FragColor = vec4(vec3(1.0, stoneDist, stoneDist), angle);
+  
+  
+  vec3 color = vec3(0.0, 0.0, 0.0);
+	gl_FragColor = vec4(vec3(1.0, stoneDist, stoneDist), 1.0 - angle);
   
 }
 `;
 
-let labyrinthMaterial = AFRAME.registerComponent('labyrinth-material', {
+let lostStoneMaterial = AFRAME.registerComponent('lost-stone-material', {
   schema: {
     // Add properties.
   },

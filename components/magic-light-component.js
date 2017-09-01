@@ -13,18 +13,18 @@ let magicLight = AFRAME.registerComponent('magic-light', {
     //   }
     // });
     
-    this.el.addEventListener('mouseenter', function (e) {
+    this.el.addEventListener('mouseenter', (e) => {
       if(e.detail.intersectedEl.id === 'lostStone') {
         this.gameState.hoveringStone = true;
       }
     });
-    this.el.addEventListener('mouseleave', function (e) {
+    this.el.addEventListener('mouseleave', (e) => {
       if(e.detail.intersectedEl.id === 'lostStone') {
         this.gameState.hoveringStone = false;
       }
     });
     
-    this.el.addEventListener('click', function (e) {
+    this.el.addEventListener('click', (e) => {
       console.log('click');
       console.log(e.detail.intersectedEl.id);
     });

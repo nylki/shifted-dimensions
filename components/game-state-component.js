@@ -8,21 +8,25 @@ export {gameStateSystem};
 
 const maxFreq = 100;
 const maxVol = 0.1;
+const SLOWTICKDELAY = 500;
 
 
 let gameStateSystem = AFRAME.registerSystem('game-state', {
   schema: {
-    level: {type: 'number', default: 1}
+    level: {type: 'number', default: -1}
   },
   init: function () {
     
     this.sceneEl = document.querySelector('a-scene');
     this.camera = document.getElementById('camera');
+    this.levelEntity = document.getElementById('level');
     this.lostStone = document.getElementById('lostStone');
     console.log(this.lostStone);
-    this.magicLight = document.querySelector('#laser');
+    this.magicLight = document.querySelector('#magicLight');
+    this.grabber = document.querySelector('#grabber');
     
-    this.lastLogTime = 0;
+    this.lastSlowTick = 0;
+    this.lastFinish = 0; // the time since the player progressed to the new level
     
     // Pre-create some vectors to avoid doing that in tick()'s
     this.dirLightStone = new THREE.Vector3();
@@ -42,11 +46,14 @@ let gameStateSystem = AFRAME.registerSystem('game-state', {
     // this.gainNode.connect(this.audioCtx.destination);
     
     
-    
+    this.grabber.addEventListener('mousedown', function (e) {
+      console.log(e);
+    });
     
   },
   tick: function (time, timeDelta) {
     
+    this.lastFinish += timeDelta;
     let vel = this.lostStone.components['physics-body'].velocity.length();
     this.dirLightStone.copy(this.magicLight.object3D.position).sub(this.lostStone.object3D.position);
     let controllerDistSound = this.dirLightStone.length() * maxFreq;
@@ -56,28 +63,56 @@ let gameStateSystem = AFRAME.registerSystem('game-state', {
 
     this.gainNode.gain.value = (1.0 / this.dirLightStone.length()) * 0.5 * maxVol;
     
-    this.lastLogTime += timeDelta;
-    if(this.lastLogTime > 2000) {
-      this.lastLogTime = 0;
-      // Calculate angle between controller direction and stone, relative to controller
-      let controllerPos = this.magicLight.object3D.position.clone();
-      let stonePos = this.lostStone.object3D.position.clone();
-      
-      let controllerLookDir = this.magicLight.object3D.getWorldDirection();
-
-      let stoneControllerDir = new THREE.Vector3().subVectors(stonePos, controllerPos);
-      
-      controllerLookDir.normalize();
-      stoneControllerDir.normalize();
-      let dot = controllerLookDir.dot(stoneControllerDir);
-      let angle = Math.acos(-dot);
-      let normAngle = angle / Math.PI;
-      let degAngle = normAngle / 180;
+    this.lastSlowTick += timeDelta;
+    if(this.lastSlowTick > SLOWTICKDELAY) {
+      this.lastSlowTick = 0;
+      this.slowTick();
+      // // Calculate angle between controller direction and stone, relative to controller
+      // let controllerPos = this.magicLight.object3D.position.clone();
+      // let stonePos = this.lostStone.object3D.position.clone();
+      //
+      // let controllerLookDir = this.magicLight.object3D.getWorldDirection();
+      //
+      // let stoneControllerDir = new THREE.Vector3().subVectors(stonePos, controllerPos);
+      //
+      // controllerLookDir.normalize();
+      // stoneControllerDir.normalize();
+      // let dot = controllerLookDir.dot(stoneControllerDir);
+      // let angle = Math.acos(-dot);
+      // let normAngle = angle / Math.PI;
+      // let degAngle = normAngle / 180;
       // console.log();
       // console.log(angle / (Math.PI / 180));
       // console.speak((angle / Math.PI).toFixed(1))
 
     }
+  },
+  slowTick: function () {
+    // Check if grabber is very close to stone
+    // console.log('SLOW TICK');
+    // console.log(this.grabber.object3D.position.distanceTo(this.lostStone.object3D.position));
+    if(this.lastFinish < 5000 && this.grabber.object3D.position.distanceTo(this.lostStone.object3D.position) < 0.1) {
+      this.nextLevel();
+    }
+    
+  },
+  nextLevel: function () {
+    if(this.data.level === -1) {
+      // Player finished first instructions and intro
+    } else if (this.data.level === 0) {
+      // player finished super easy level
+      
+    } else {
+
+    }
+    
+    this.data.level++;
+    this.lastFinish = 0;
+  
+    console.speak('You have found the lost stone. Next Level!');
+    console.info('NEXT LEVEL', this.data.level);
+    this.levelEntity.setAttribute('level', {difficulty: this.data.level});
+    
   }
   
 });
