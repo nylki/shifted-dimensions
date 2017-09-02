@@ -31,6 +31,8 @@ let pseudoPhysicsSystem = AFRAME.registerSystem('pseudo-physics', {
         this.futureChildBox.setFromCenterAndSize(this.futurePos, child.boundingBoxSize);
 
         for (let collider of this.colliders) {
+          // console.log(child, collider);
+          if(collider.el === child.el) continue;
           // console.log(JSON.stringify(this.futureColliderBox));
           if(this.futureChildBox.intersectsBox(collider.boundingBox)) {
             
@@ -44,9 +46,11 @@ let pseudoPhysicsSystem = AFRAME.registerSystem('pseudo-physics', {
           }
 
           this.futurePos.copy(child.el.object3D.position).add(child.velocity);
-          child.el.setAttribute('position', this.futurePos);
         }
       }
+      
+      if(child.data.gravity !== 0 || child.data.collidesAgainst)
+        child.el.setAttribute('position', this.futurePos);
       
       
 

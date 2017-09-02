@@ -14,6 +14,22 @@ let levelComponent = AFRAME.registerComponent('level', {
   init: function () {
 
   },
+  getNewWall: function (w,h,d) {
+    
+    let wall = document.createElement('wall');
+    wall.setAttribute('geometry', {
+      width: w,
+      height: h,
+      depth: d
+    });
+    wall.setAttribute('physics-body', {
+      mass:0.00,
+      collidesOthers: true
+    });
+    wall.setAttribute('labyrinth-material', '');
+    return wall;
+    
+  },
   update: function () {
     // Create new level
     const difficulty = this.data.difficulty;
@@ -21,6 +37,10 @@ let levelComponent = AFRAME.registerComponent('level', {
     if(difficulty === -1) return;
     if(difficulty === 0) {
       //create some walls and place the lost stone
+      let walls = [];
+      for (var i = 0; i < 5; i++) {
+
+      }
     } else {
       //create some walls and place the lost stone
     }

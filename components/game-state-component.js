@@ -6,7 +6,7 @@
 
 export {gameStateSystem};
 
-const maxFreq = 100;
+const maxFreq = 500;
 const maxVol = 0.1;
 const SLOWTICKDELAY = 500;
 
@@ -35,15 +35,15 @@ let gameStateSystem = AFRAME.registerSystem('game-state', {
     this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     
     this.oscillator = this.audioCtx.createOscillator();
-    // this.oscillator.type = 'square'; // sine wave — other values are 'square', 'sawtooth', 'triangle' and 'custom'
-    // this.oscillator.frequency.value = 0; // value in hertz
-    // this.oscillator.detune.value = 100;
+    this.oscillator.type = 'triangle'; // sine wave — other values are 'square', 'sawtooth', 'triangle' and 'custom'
+    this.oscillator.frequency.value = 0; // value in hertz
+    this.oscillator.detune.value = 100;
     // this.oscillator.start();
     //
     this.gainNode = this.audioCtx.createGain();
     //
-    // this.oscillator.connect(this.gainNode);
-    // this.gainNode.connect(this.audioCtx.destination);
+    this.oscillator.connect(this.gainNode);
+    this.gainNode.connect(this.audioCtx.destination);
     
     
     this.grabber.addEventListener('mousedown', function (e) {
@@ -91,7 +91,8 @@ let gameStateSystem = AFRAME.registerSystem('game-state', {
     // Check if grabber is very close to stone
     // console.log('SLOW TICK');
     // console.log(this.grabber.object3D.position.distanceTo(this.lostStone.object3D.position));
-    if(this.lastFinish < 5000 && this.grabber.object3D.position.distanceTo(this.lostStone.object3D.position) < 0.1) {
+
+    if(this.lastFinish > 5000 && this.grabber.object3D.position.distanceTo(this.lostStone.object3D.position) < 0.1) {
       this.nextLevel();
     }
     
@@ -101,6 +102,7 @@ let gameStateSystem = AFRAME.registerSystem('game-state', {
       // Player finished first instructions and intro
     } else if (this.data.level === 0) {
       // player finished super easy level
+      
       
     } else {
 

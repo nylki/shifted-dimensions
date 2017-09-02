@@ -9,45 +9,65 @@
 <meta charset="utf-8"/>
 <body>
 	<a-scene debug stats game-state pseudo-physics>
-		<a-entity id="camera" camera wasd-controls look-controls></a-entity>
+		
+		<a-assets>
+		<a-mixin id="line" geometry="primitive: box; height: 0.2; width: 0.4; depth: 0.2;" material=""></a-mixin>
+
+		<a-mixin id="blue" material="color: #45b5c8;"></a-mixin>
+		
+</a-assets>
+		
+		
+		<a-entity id="camera" camera wasd-controls look-controls>
+		</a-entity>
+				
 		<a-entity id="magicLight" laser-controls="hand: right;" raycaster="far: 10; interval:200" magic-light></a-entity>
 		<a-entity id="grabber" laser-controls="hand: left;" raycaster="far: 5; objects: #lostStone; interval:200"></a-entity>
 		
 		
 		
 		<!-- TODO: Baue Labyrinth in dem lostStone ist um Interaktion zu testen
-								evtl. physik und prozedural erzeugtes labyrinth später
-								
-								lostStone ist nur unter dem magic light sichtbar, hat sound
-	 	-->
+		evtl. physik und prozedural erzeugtes labyrinth später
 		
-				
-				<!-- <a-entity id="leftHand" hand-controls="left"> -->
-			<a-entity id="level" level="difficulty:-1" position="0 0 0">
-				 <a-box physics-body="mass:0.0; collidesOthers:true" depth="10" height="0.1" width="10" position="0 0 0" rotation="0 0 0" color="#bfb0a7"></a-box>
-				
-				<!--1.651.651.1.6565
-				<a-box labyrinth-material physics-body="mass:0.0; collidesOthers:true" depth="5" height="5" width="0.1" position="-2.5 0 -3" rotation="0 0 0" color="#d97f4c"></a-box>
-				<a-box labyrinth-material physics-body="mass:0.0; collidesOthers:true" depth="5" height="5" width="0.1" position="2.5 0 -3" rotation="0 0 0" color="#d97f4c"></a-box> -->
-				
-				<!-- <a-entity id="leftHand" hand-controls="left"> -->
-
-				
-		
-			
-			<a-box id="lostStone" lost-stone-material physics-body="mass:0.0002; collidesAgainst:true" width="0.2" height="0.2" depth="0.2" position="0 3 0" rotation="0 0 0"></a-box>
-			
-			
-			<a-box labyrinth-material="color:#ff0000" physics-body="mass:0.0; collidesOthers:true" depth="0.5" height="1" width="0.5" position="0 0 0" rotation="0 0 0"></a-box>
-			
-			</a-entity>
-		
-
+		lostStone ist nur unter dem magic light sichtbar, hat sound
+	-->
+	
+	
+	<!-- <a-entity id="leftHand" hand-controls="left"> -->
+	<a-entity id="level" level="difficulty:-1" position="0 0 0">
 		
 		
-
-
-
-
-	</a-scene>
+		<a-box id="floor" physics-body="mass:0.0; collidesOthers:true" depth="10" height="0.1" width="10" position="0 0 0" rotation="0 0 0" color="#5b3d2b"></a-box>
+		
+		<!--1.651.651.1.6565
+		<a-box labyrinth-material physics-body="mass:0.0; collidesOthers:true" depth="5" height="5" width="0.1" position="-2.5 0 -3" rotation="0 0 0" color="#d97f4c"></a-box>
+		<a-box labyrinth-material physics-body="mass:0.0; collidesOthers:true" depth="5" height="5" width="0.1" position="2.5 0 -3" rotation="0 0 0" color="#d97f4c"></a-box> -->
+		
+		<!-- <a-entity id="leftHand" hand-controls="left"> -->
+		
+		
+		
+		
+		<a-entity id="kochflake" lsystem="axiom: F++F++F; productions: F:F-F++F-F; segmentMixins: F:blue line; angle: 60; iterations: 4; translateAxis: X; mergeGeometries: false" rotation="90 0 0" position="0 10 -10">
+</a-entity>
+		
+		
+		<a-box id="lostStone" physics-body="mass:0.01; collidesOthers: true; collidesAgainst:true" lost-stone-material width="0.025" height="0.025" depth="0.025" position="0 1.6 0" rotation="0 0 0"></a-box>
+		
+		<a-text scale="0.3 0.3 0.3" position="0 2 -1.5" value="Welcome!\nTo start the game,\ntouch the stone."> </a-text>
+		
+		
+		
+		<a-box labyrinth-material="color:#93b872" physics-body="mass:0.0; collidesOthers:true" depth="0.5" height="1.25" width="0.5" position="0 0 0" rotation="0 0 0"></a-box>
+		
+	</a-entity>
+	
+	
+	
+	
+	
+	
+	
+	
+</a-scene>
 </body>

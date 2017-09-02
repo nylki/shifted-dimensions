@@ -40,7 +40,8 @@ void main(void)
   float dot = dot(u_controllerLookDir, controllerDir);
   float angle = acos(dot) / PI;
   
-	gl_FragColor = vec4(vec3(1.0, stoneDist, stoneDist), angle);
+  vec3 c = mix(color, vec3(0.2, 0.2, 0.2), (stoneDist * 5.0));
+	gl_FragColor = vec4(c, angle);
   
 }
 `;
