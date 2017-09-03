@@ -10,6 +10,7 @@ export {gameStateSystem};
 const maxFreq = 500;
 const maxVol = 0.1;
 const SLOWTICKDELAY = 500;
+const STARTENERGY = 1000;
 
 
 let gameStateSystem = AFRAME.registerSystem('game-state', {
@@ -25,15 +26,21 @@ let gameStateSystem = AFRAME.registerSystem('game-state', {
     console.log(this.lostStone);
     this.magicLight = document.querySelector('#magicLight');
     this.grabber = document.querySelector('#grabber');
-    
+    this.energyIndicators = document.querySelectorAll('.energyIndicator');
     this.lastSlowTick = 0;
     this.lastFinish = 0; // the time since the player progressed to the new level
+    
+    this.lostGame = false;
+    this.energy = STARTENERGY;
+    
+    this.headCollisionDistance = 999;
+    this.headCollisionDuration = -1;
+    this.headCollisionStarted = -1;
     
     // Pre-create some vectors to avoid doing that in tick()'s
     this.dirLightStone = new THREE.Vector3();
     
-    // Init audio foo
-    
+    // Init audio stuff
     this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     this.speechSynth = window.speechSynthesis;
     
@@ -41,12 +48,12 @@ let gameStateSystem = AFRAME.registerSystem('game-state', {
     this.oscillator.type = 'triangle'; // sine wave — other values are 'square', 'sawtooth', 'triangle' and 'custom'
     this.oscillator.frequency.value = 0; // value in hertz
     this.oscillator.detune.value = 100;
-    // this.oscillator.start();
-    //
+
     this.gainNode = this.audioCtx.createGain();
     //
     this.oscillator.connect(this.gainNode);
     this.gainNode.connect(this.audioCtx.destination);
+    this.oscillator.start();
     
     
     this.grabber.addEventListener('mousedown', function (e) {
@@ -80,17 +87,22 @@ let gameStateSystem = AFRAME.registerSystem('game-state', {
   tick: function (time, timeDelta) {
     this.lastFinish += timeDelta;
     this.time = time;
+    if(this.energy <= 0 && this.lostGame === false) {
+      this.lostGame = true;
+      this.endGame();
+      return;
+    }
     
-    
-    
-    let vel = this.lostStone.components['physics-body'].velocity.length();
-    this.dirLightStone.copy(this.magicLight.object3D.position).sub(this.lostStone.object3D.position);
-    let controllerDistSound = this.dirLightStone.length() * maxFreq;
-    let stoneSpeedSound = maxFreq * vel * 100.0;
-    let baseFreq = maxFreq;
-    this.oscillator.frequency.value = Math.min((1/3) * (baseFreq + controllerDistSound + stoneSpeedSound), maxFreq);
+      
+    // let vel = this.lostStone.components['physics-body'].velocity.length();
+    // this.dirLightStone.copy(this.magicLight.object3D.position).sub(this.lostStone.object3D.position);
+    // let controllerDistSound = this.dirLightStone.length() * maxFreq;
+    // let stoneSpeedSound = maxFreq * vel * 100.0;
+    // let baseFreq = maxFreq;
+    // this.oscillator.frequency.value = Math.min((1/3) * (baseFreq + controllerDistSound + stoneSpeedSound), maxFreq);
 
-    this.gainNode.gain.value = (1.0 / this.dirLightStone.length()) * 0.5 * maxVol;
+    this.oscillator.frequency.value = 440;
+    this.gainNode.gain.value =  0.03 * Math.max(0.0, 1.0 - this.headCollisionDistance);
 
     this.slowTick();
 
@@ -112,14 +124,15 @@ let gameStateSystem = AFRAME.registerSystem('game-state', {
       // console.log(angle / (Math.PI / 180));
       // console.speak((angle / Math.PI).toFixed(1))
 
-    
+    // console.log(this.energy);
+    this.energyIndicators.forEach(indicator => indicator.setAttribute('energy-indicator', {value: this.energy}));
   },
   slowTick: function (t, dt) {
     console.log('slow tick');
     // Check if grabber is very close to stone
     // console.log('SLOW TICK');
     // console.log(this.grabber.object3D.position.distanceTo(this.lostStone.object3D.position));
-
+    this.energy-=20;
     if(this.lastFinish > 5000 && this.grabber.object3D.position.distanceTo(this.lostStone.object3D.position) < 0.1) {
       this.nextLevel();
     }
@@ -129,6 +142,7 @@ let gameStateSystem = AFRAME.registerSystem('game-state', {
     speak('dont touch the walls!');
   },
   nextLevel: function () {
+    this.lostGame = false;
     if(this.data.level === -1) {
       // Player finished first instructions and intro
     } else if (this.data.level === 0) {
@@ -142,9 +156,13 @@ let gameStateSystem = AFRAME.registerSystem('game-state', {
     this.data.level++;
     this.lastFinish = 0;
   
-    console.speak('You have found the lost stone. Next Level!');
+    speak('You have found the lost stone. Next Level!');
     console.info('NEXT LEVEL', this.data.level);
     this.levelEntity.setAttribute('level', {difficulty: this.data.level});
+    
+  }, endGame: function () {
+    speak('Your energy is depleted. You lost. Do you want to try again?');
+    // TODO: show menu with: start from level 0; retry current level; exit vr;
     
   }
   
