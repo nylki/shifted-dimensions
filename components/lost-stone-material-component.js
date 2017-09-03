@@ -23,6 +23,8 @@ uniform vec2 u_resolution;
 uniform vec3 u_controllerPos;
 uniform vec3 u_controllerLookDir;
 uniform vec3 u_stonePos;
+uniform bool u_controllerActive;
+uniform float u_triggerDuration;
 
 varying vec4 worldPosition;
 
@@ -42,8 +44,10 @@ void main(void)
   
   
   vec3 color = vec3(0.0, 0.0, 0.0);
-	gl_FragColor = vec4(vec3(1.0, stoneDist, stoneDist), 1.0 - angle);
-  // gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
+  if(!u_controllerActive) {
+      angle = 0.01;
+  }
+  gl_FragColor = vec4(vec3(1.0, stoneDist, stoneDist), u_triggerDuration * (1.0 - angle));
   
 }
 `;
@@ -64,6 +68,9 @@ let lostStoneMaterial = AFRAME.registerComponent('lost-stone-material', {
         u_controllerPos: {value: this.gameState.magicLight.object3D.position},
         u_controllerLookDir: {value: this.gameState.magicLight.object3D.getWorldDirection()},
         u_stonePos: {value: this.gameState.lostStone.object3D.position},
+        u_controllerActive: {value: this.gameState.magicLight.triggerPressed},
+        u_triggerDuration: {value: this.gameState.time - this.gameState.magicLight.triggerTime}
+
       },
       vertexShader,
       fragmentShader,
@@ -95,7 +102,10 @@ let lostStoneMaterial = AFRAME.registerComponent('lost-stone-material', {
     this.material.uniforms.u_stonePos.value = this.gameState.lostStone.object3D.position;
     this.material.uniforms.u_controllerPos.value = this.gameState.magicLight.object3D.position;
     this.material.uniforms.u_controllerLookDir.value = this.gameState.magicLight.object3D.getWorldDirection();
-
+    this.material.uniforms.u_controllerActive.value = this.gameState.magicLight.triggerPressed;
+    if(this.gameState.magicLight.triggerPressed) {
+      this.material.uniforms.u_triggerDuration.value = this.gameState.time - this.gameState.magicLight.triggerTime;
+    }
   
     
     

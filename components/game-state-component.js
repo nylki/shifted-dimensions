@@ -10,7 +10,7 @@ export {gameStateSystem};
 const maxFreq = 500;
 const maxVol = 0.1;
 const SLOWTICKDELAY = 500;
-const STARTENERGY = 1000;
+const STARTENERGY = 10000;
 
 
 let gameStateSystem = AFRAME.registerSystem('game-state', {
@@ -93,6 +93,10 @@ let gameStateSystem = AFRAME.registerSystem('game-state', {
       return;
     }
     
+    if(this.magicLight.triggerPressed) {
+      this.energy--;
+    }
+    
       
     // let vel = this.lostStone.components['physics-body'].velocity.length();
     // this.dirLightStone.copy(this.magicLight.object3D.position).sub(this.lostStone.object3D.position);
@@ -128,7 +132,6 @@ let gameStateSystem = AFRAME.registerSystem('game-state', {
     this.energyIndicators.forEach(indicator => indicator.setAttribute('energy-indicator', {value: this.energy}));
   },
   slowTick: function (t, dt) {
-    console.log('slow tick');
     // Check if grabber is very close to stone
     // console.log('SLOW TICK');
     // console.log(this.grabber.object3D.position.distanceTo(this.lostStone.object3D.position));

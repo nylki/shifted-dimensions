@@ -2,8 +2,8 @@ export {energyIndicator};
 
 let energyIndicator = AFRAME.registerComponent('energy-indicator', {
   schema: {
-    value: {type: 'number', default: 1000},
-    max: {type: 'number', default: 1000},
+    value: {type: 'number', default: 10000},
+    max: {type: 'number', default: 10000},
     width: {type: 'number', default: 1},
     height: {type: 'number', default: 0.1},
     
