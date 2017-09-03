@@ -40,8 +40,8 @@ void main(void)
   float dot = dot(u_controllerLookDir, controllerDir);
   float angle = acos(dot) / PI;
   
-  vec3 c = mix(color, vec3(0.2, 0.2, 0.2), (stoneDist * 5.0));
-	gl_FragColor = vec4(c, angle);
+  // vec3 c = mix(color, vec3(0.2, 0.2, 0.2), (stoneDist * 5.0));
+	gl_FragColor = vec4(color, angle * 10.0);
   
 }
 `;
@@ -53,6 +53,7 @@ let labyrinthMaterial = AFRAME.registerComponent('labyrinth-material', {
   init: function () {
     this.sceneEl = document.querySelector('a-scene');
     this.gameState = this.sceneEl.systems['game-state'];
+    // this.el.object3D.renderOrder = 1;
     const data = this.data;
     this.material  = new THREE.ShaderMaterial({
       uniforms: {

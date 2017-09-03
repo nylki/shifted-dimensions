@@ -1,7 +1,7 @@
 {
   "name": "js13k_lost",
   "version": "1.0.0",
-  "description": "",
+  "description": "Entry to the js13kGames 2017 competition in the A-Frame category.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -15,20 +15,16 @@
     "url": "git+https://github.com/nylki/js13k_lost.git"
   },
   "author": "nylki (Tom Brewe)",
-  "license": "MIT",
+  "license": "GPL",
   "bugs": {
     "url": "https://github.com/nylki/js13k_lost/issues"
   },
   "homepage": "https://github.com/nylki/js13k_lost#readme",
-  "dependencies": {
-    "aframe-lsystem-component": "^0.1.12"
-  },
+  "dependencies": {},
   "devDependencies": {
     "browser-sync": "^2.18.13",
     "concurrently": "^3.5.0",
     "rollup": "^0.48.2",
-    "rollup-plugin-commonjs": "^8.2.0",
-    "rollup-plugin-node-resolve": "^3.0.0",
     "uglify-es": "^3.0.28",
     "watch": "^1.0.2"
   }

@@ -17,8 +17,9 @@
 		
 </a-assets>
 		
+		<a-sky color="rgba(151, 175, 177, 1)"> </a-sky>
 		
-		<a-entity id="camera" camera wasd-controls look-controls>
+		<a-entity id="camera" raycaster="origin: 0 0 0.2; direction: 0 0 -1; showLine: true; far: 0.7; interval: ; objects:.wall" camera wasd-controls look-controls>
 		</a-entity>
 				
 		<a-entity id="magicLight" laser-controls="hand: right;" raycaster="far: 10; interval:200" magic-light></a-entity>
@@ -36,31 +37,31 @@
 	<!-- <a-entity id="leftHand" hand-controls="left"> -->
 	<a-entity id="level" level="difficulty:-1" position="0 0 0">
 		
+		<a-box id="lostStone" physics-body="mass:0.01; collidesOthers: true; collidesAgainst:true" lost-stone-material width="0.025" height="0.025" depth="0.025" position="0 1.6 0" rotation="0 0 0"></a-box>
+				
+		<a-entity id="wallContainer">
+		
+			<a-box class="wall" labyrinth-material="color:#93b872" physics-body="mass:0.0; collidesOthers:true" depth="0.5" height="1.25" width="0.5" position="0 0 0" rotation="0 0 0"></a-box>
+		
+		</a-entity>
 		
 		<a-box id="floor" physics-body="mass:0.0; collidesOthers:true" depth="10" height="0.1" width="10" position="0 0 0" rotation="0 0 0" color="#5b3d2b"></a-box>
 		
 		<!--1.651.651.1.6565
 		<a-box labyrinth-material physics-body="mass:0.0; collidesOthers:true" depth="5" height="5" width="0.1" position="-2.5 0 -3" rotation="0 0 0" color="#d97f4c"></a-box>
 		<a-box labyrinth-material physics-body="mass:0.0; collidesOthers:true" depth="5" height="5" width="0.1" position="2.5 0 -3" rotation="0 0 0" color="#d97f4c"></a-box> -->
-		
-		<!-- <a-entity id="leftHand" hand-controls="left"> -->
-		
-		
+
+	</a-entity>
 		
 		
-		<a-entity id="kochflake" lsystem="axiom: F++F++F; productions: F:F-F++F-F; segmentMixins: F:blue line; angle: 60; iterations: 4; translateAxis: X; mergeGeometries: false" rotation="90 0 0" position="0 10 -10">
-</a-entity>
-		
-		
-		<a-box id="lostStone" physics-body="mass:0.01; collidesOthers: true; collidesAgainst:true" lost-stone-material width="0.025" height="0.025" depth="0.025" position="0 1.6 0" rotation="0 0 0"></a-box>
+
 		
 		<a-text scale="0.3 0.3 0.3" position="0 2 -1.5" value="Welcome!\nTo start the game,\ntouch the stone."> </a-text>
 		
 		
 		
-		<a-box labyrinth-material="color:#93b872" physics-body="mass:0.0; collidesOthers:true" depth="0.5" height="1.25" width="0.5" position="0 0 0" rotation="0 0 0"></a-box>
+
 		
-	</a-entity>
 	
 	
 	

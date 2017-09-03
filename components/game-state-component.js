@@ -4,6 +4,7 @@
 // This won't negatively affect file size after uglifying, because unused let statements
 // are discarded; eg: `let fooBarComponent = AFRAME.registerComponent(...)` becomes `AFRAME.registerComponent(...)`
 
+import {speak} from './speak.js';
 export {gameStateSystem};
 
 const maxFreq = 500;
@@ -32,7 +33,9 @@ let gameStateSystem = AFRAME.registerSystem('game-state', {
     this.dirLightStone = new THREE.Vector3();
     
     // Init audio foo
+    
     this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    this.speechSynth = window.speechSynthesis;
     
     this.oscillator = this.audioCtx.createOscillator();
     this.oscillator.type = 'triangle'; // sine wave — other values are 'square', 'sawtooth', 'triangle' and 'custom'
@@ -50,10 +53,36 @@ let gameStateSystem = AFRAME.registerSystem('game-state', {
       console.log(e);
     });
     
+    this.camera.addEventListener('raycaster-intersection', (e) => {
+      console.log('head touched wall');
+      if(this.headCollisionDuration !== -1) {
+        this.headCollisionStarted = this.time;
+      }
+      this.headCollisionDistance = e.detail.intersections[0].distance;
+      this.headCollisionDuration = this.time - this.headCollisionStarted;
+      console.log(this.headCollisionDistance);
+      if(this.headCollisionDistance < 0.2) {
+        this.wallTouchWarning();
+      }
+    });
+    
+    this.camera.addEventListener('raycaster-intersection-cleared', (e) => {
+      console.log('HEAD TOUCHED THE WALL!!', this.headCollisionDuration);
+      console.log(e);
+      this.headCollisionDuration = this.headCollisionStarted = -1;
+      this.headCollisionDistance = 999;
+    });
+    
+    this.slowTick = AFRAME.utils.throttle(this.slowTick, SLOWTICKDELAY, this);
+    this.wallTouchWarning = AFRAME.utils.throttle(this.wallTouchWarning, 4000, this);
+    
   },
   tick: function (time, timeDelta) {
-    
     this.lastFinish += timeDelta;
+    this.time = time;
+    
+    
+    
     let vel = this.lostStone.components['physics-body'].velocity.length();
     this.dirLightStone.copy(this.magicLight.object3D.position).sub(this.lostStone.object3D.position);
     let controllerDistSound = this.dirLightStone.length() * maxFreq;
@@ -62,11 +91,9 @@ let gameStateSystem = AFRAME.registerSystem('game-state', {
     this.oscillator.frequency.value = Math.min((1/3) * (baseFreq + controllerDistSound + stoneSpeedSound), maxFreq);
 
     this.gainNode.gain.value = (1.0 / this.dirLightStone.length()) * 0.5 * maxVol;
-    
-    this.lastSlowTick += timeDelta;
-    if(this.lastSlowTick > SLOWTICKDELAY) {
-      this.lastSlowTick = 0;
-      this.slowTick();
+
+    this.slowTick();
+
       // // Calculate angle between controller direction and stone, relative to controller
       // let controllerPos = this.magicLight.object3D.position.clone();
       // let stonePos = this.lostStone.object3D.position.clone();
@@ -85,9 +112,10 @@ let gameStateSystem = AFRAME.registerSystem('game-state', {
       // console.log(angle / (Math.PI / 180));
       // console.speak((angle / Math.PI).toFixed(1))
 
-    }
+    
   },
-  slowTick: function () {
+  slowTick: function (t, dt) {
+    console.log('slow tick');
     // Check if grabber is very close to stone
     // console.log('SLOW TICK');
     // console.log(this.grabber.object3D.position.distanceTo(this.lostStone.object3D.position));
@@ -96,6 +124,9 @@ let gameStateSystem = AFRAME.registerSystem('game-state', {
       this.nextLevel();
     }
     
+  },
+  wallTouchWarning: function () {
+    speak('dont touch the walls!');
   },
   nextLevel: function () {
     if(this.data.level === -1) {
