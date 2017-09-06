@@ -14,7 +14,7 @@ let levelComponent = AFRAME.registerComponent('level', {
   init: function () {
     this.sceneEl = document.querySelector('a-scene');
     this.gameState = this.sceneEl.systems['game-state'];
-    this.wallContainer = document.getElementById('wallContainer');
+    this.wallContainer = this.gameState.wallContainer;
 
   },
   getNewWall: function (w,h,d) {

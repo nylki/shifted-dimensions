@@ -30,11 +30,19 @@ uniform float u_triggerDuration;
 
 varying vec4 worldPosition;
 
+
+
+float gain(float x, float k)
+{
+  float a = 0.5*pow(2.0*((x<0.5)?x:1.0-x), k);
+  return (x<0.5)?a:1.0-a;
+}
+
 void main(void)
 {
   vec3 controllerDir = u_controllerPos - worldPosition.xyz;
   vec3 stoneDir = u_stonePos - worldPosition.xyz;
-  float dist = length(controllerDir) * 0.15;
+  float dist = length(controllerDir);
   float stoneDist = length(stoneDir) * 0.3;
 	// vec2 uv = gl_FragCoord.xy / u_resolution.xy;
   
@@ -43,9 +51,14 @@ void main(void)
   float dot = dot(u_controllerLookDir, controllerDir);
   float angle = acos(dot) / PI;
   
+  float normDist = min(dist, 1.0);
   // vec3 c = mix(color, vec3(0.2, 0.2, 0.2), (stoneDist * 5.0));
-  if(u_controllerActive) {
-    gl_FragColor = vec4(color, u_triggerDuration * angle * 10.0);
+  if(u_controllerActive == true) {
+    float triggerDurSecs = u_triggerDuration / 1000.0;
+    float durOpacity = max(0.3, 1.0 - triggerDurSecs * 0.4);
+    float angleOpacity = angle * 10.0;
+    float opacity = max(min(normDist, 0.4),  durOpacity * angleOpacity);
+    gl_FragColor = vec4(color, opacity);
   } else {
     gl_FragColor = vec4(color, 1.0);
   }
@@ -98,9 +111,11 @@ let labyrinthMaterial = AFRAME.registerComponent('labyrinth-material', {
     this.material.uniforms.u_stonePos.value = this.gameState.lostStone.object3D.position;
     this.material.uniforms.u_controllerPos.value = this.gameState.magicLight.object3D.position;
     this.material.uniforms.u_controllerLookDir.value = this.gameState.magicLight.object3D.getWorldDirection();
-    this.material.uniforms.u_controllerActive.value = this.gameState.magicLight.triggerPressed;
-    if(this.gameState.magicLight.triggerPressed) {
-      this.material.uniforms.u_triggerDuration.value = this.gameState.time - this.gameState.magicLight.triggerTime;
+    
+    let triggerPressed = this.gameState.magicLight.components['magic-light'].triggerPressed;
+    this.material.uniforms.u_controllerActive.value = triggerPressed;
+    if(triggerPressed) {
+      this.material.uniforms.u_triggerDuration.value = this.gameState.time - this.gameState.magicLight.components['magic-light'].triggerTime;
     }
   
 

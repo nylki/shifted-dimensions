@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "concurrently -k \"browser-sync start --no-open --reload-delay 1000 --server 'dist' --files dist\" \"watch 'npm run rollup' -d -p /dist/ --interval=2 --wait=6\"",
+    "dev": "concurrently -k \"browser-sync start --no-open --reload-delay 1000 --server \"dist\" -f \"dist\"\" \"watch 'npm run rollup' -d -p /dist/ --interval=2 --wait=6\"",
     "rollup": "mkdir -p dist && rollup -c && cp index.html dist/index.html",
     "minify": "uglifyjs ./dist/index.js --comments --compress --mangle -o ./dist/index.js && cp index.html dist/index.html",
     "dist": "npm run rollup && npm run minify"
@@ -15,7 +15,7 @@
     "url": "git+https://github.com/nylki/js13k_lost.git"
   },
   "author": "nylki (Tom Brewe)",
-  "license": "GPL",
+  "license": "GPL-3.0",
   "bugs": {
     "url": "https://github.com/nylki/js13k_lost/issues"
   },

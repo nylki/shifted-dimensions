@@ -4,7 +4,7 @@ Entry to the js13kGames 2017 gamejam/competition
 
 ## How To Play
 
-You are in a weightless universe and have lost your special stones that give you energy to!
+You are in a weightless universe and have lost your special stones that give you energy!
 You must find them all before your remaining energy is drained.
 
 The stones are however invisible to the normal eye and scattered all around you.

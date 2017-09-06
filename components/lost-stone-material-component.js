@@ -47,7 +47,7 @@ void main(void)
   if(!u_controllerActive) {
       angle = 0.01;
   }
-  gl_FragColor = vec4(vec3(1.0, stoneDist, stoneDist), u_triggerDuration * (1.0 - angle));
+  gl_FragColor = vec4(vec3(1.0, stoneDist, stoneDist),  (1.0 - angle));
   
 }
 `;
@@ -102,8 +102,9 @@ let lostStoneMaterial = AFRAME.registerComponent('lost-stone-material', {
     this.material.uniforms.u_stonePos.value = this.gameState.lostStone.object3D.position;
     this.material.uniforms.u_controllerPos.value = this.gameState.magicLight.object3D.position;
     this.material.uniforms.u_controllerLookDir.value = this.gameState.magicLight.object3D.getWorldDirection();
-    this.material.uniforms.u_controllerActive.value = this.gameState.magicLight.triggerPressed;
-    if(this.gameState.magicLight.triggerPressed) {
+    let triggerPressed = this.gameState.magicLight.components['magic-light'].triggerPressed;
+    this.material.uniforms.u_controllerActive.value = triggerPressed;
+    if(triggerPressed) {
       this.material.uniforms.u_triggerDuration.value = this.gameState.time - this.gameState.magicLight.triggerTime;
     }
   

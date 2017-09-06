@@ -3,7 +3,7 @@
 // This file/module uses named exports to export both system and component in one module.
 // This won't negatively affect file size after uglifying, because unused let statements
 // are discarded; eg: `let fooBarComponent = AFRAME.registerComponent(...)` becomes `AFRAME.registerComponent(...)`
-
+//
 import {speak} from './speak.js';
 export {gameStateSystem};
 
@@ -25,7 +25,8 @@ let gameStateSystem = AFRAME.registerSystem('game-state', {
     this.lostStone = document.getElementById('lostStone');
     console.log(this.lostStone);
     this.magicLight = document.querySelector('#magicLight');
-    this.grabber = document.querySelector('#grabber');
+    this.wallContainer = document.querySelector('#wallContainer');
+
     this.energyIndicators = document.querySelectorAll('.energyIndicator');
     this.lastSlowTick = 0;
     this.lastFinish = 0; // the time since the player progressed to the new level
@@ -45,20 +46,48 @@ let gameStateSystem = AFRAME.registerSystem('game-state', {
     this.speechSynth = window.speechSynthesis;
     
     this.oscillator = this.audioCtx.createOscillator();
+    this.biquadFilter = this.audioCtx.createBiquadFilter();
+    this.gainNode = this.audioCtx.createGain();
+    this.distortion = this.audioCtx.createWaveShaper();
+    
+    this.oscillator.connect(this.gainNode);
+    this.gainNode.connect(this.biquadFilter);
+    this.biquadFilter.connect(this.distortion);
+    this.distortion.connect(this.audioCtx.destination);
+    
+
+    
     this.oscillator.type = 'triangle'; // sine wave — other values are 'square', 'sawtooth', 'triangle' and 'custom'
     this.oscillator.frequency.value = 0; // value in hertz
     this.oscillator.detune.value = 100;
+    
+    this.biquadFilter.type = 'lowshelf';
+    this.biquadFilter.frequency.value = 300;
+    this.biquadFilter.gain.value = 25;
+    
 
-    this.gainNode = this.audioCtx.createGain();
-    //
-    this.oscillator.connect(this.gainNode);
-    this.gainNode.connect(this.audioCtx.destination);
+    // makeDistortionCurve via https://developer.mozilla.org/en-US/docs/Web/API/WaveShaperNode#Example
+    function makeDistortionCurve(amount) {
+      var k = typeof amount === 'number' ? amount : 50,
+      n_samples = 44100,
+      curve = new Float32Array(n_samples),
+      deg = Math.PI / 180,
+      i = 0,
+      x;
+      for ( ; i < n_samples; ++i ) {
+        x = i * 2 / n_samples - 1;
+        curve[i] = ( 3 + k ) * x * 20 * deg / ( Math.PI + k * Math.abs(x) );
+      }
+      return curve;
+    };
+
+    
+    this.distortion.curve = makeDistortionCurve(400);
+    this.distortion.oversample = '4x';
+    
     this.oscillator.start();
     
     
-    this.grabber.addEventListener('mousedown', function (e) {
-      console.log(e);
-    });
     
     this.camera.addEventListener('raycaster-intersection', (e) => {
       console.log('head touched wall');
@@ -97,46 +126,46 @@ let gameStateSystem = AFRAME.registerSystem('game-state', {
       this.energy--;
     }
     
-      
+    
     // let vel = this.lostStone.components['physics-body'].velocity.length();
     // this.dirLightStone.copy(this.magicLight.object3D.position).sub(this.lostStone.object3D.position);
     // let controllerDistSound = this.dirLightStone.length() * maxFreq;
     // let stoneSpeedSound = maxFreq * vel * 100.0;
     // let baseFreq = maxFreq;
     // this.oscillator.frequency.value = Math.min((1/3) * (baseFreq + controllerDistSound + stoneSpeedSound), maxFreq);
-
-    this.oscillator.frequency.value = 440;
-    this.gainNode.gain.value =  0.03 * Math.max(0.0, 1.0 - this.headCollisionDistance);
-
+    let r = 1 - Math.round(Math.random() * 20) / 200; // ca. 0.9 - 1.0
+    let baseFreq = 100;
+    // console.log(r);
+    this.oscillator.frequency.value = r*baseFreq + ((Math.sin(time * 0.005)) * baseFreq);
+    this.gainNode.gain.value =  0.5;//0.03 * Math.max(0.0, 1.0 - this.headCollisionDistance);
+    
     this.slowTick();
-
-      // // Calculate angle between controller direction and stone, relative to controller
-      // let controllerPos = this.magicLight.object3D.position.clone();
-      // let stonePos = this.lostStone.object3D.position.clone();
-      //
-      // let controllerLookDir = this.magicLight.object3D.getWorldDirection();
-      //
-      // let stoneControllerDir = new THREE.Vector3().subVectors(stonePos, controllerPos);
-      //
-      // controllerLookDir.normalize();
-      // stoneControllerDir.normalize();
-      // let dot = controllerLookDir.dot(stoneControllerDir);
-      // let angle = Math.acos(-dot);
-      // let normAngle = angle / Math.PI;
-      // let degAngle = normAngle / 180;
-      // console.log();
-      // console.log(angle / (Math.PI / 180));
-      // console.speak((angle / Math.PI).toFixed(1))
-
+    
+    // // Calculate angle between controller direction and stone, relative to controller
+    // let controllerPos = this.magicLight.object3D.position.clone();
+    // let stonePos = this.lostStone.object3D.position.clone();
+    //
+    // let controllerLookDir = this.magicLight.object3D.getWorldDirection();
+    //
+    // let stoneControllerDir = new THREE.Vector3().subVectors(stonePos, controllerPos);
+    //
+    // controllerLookDir.normalize();
+    // stoneControllerDir.normalize();
+    // let dot = controllerLookDir.dot(stoneControllerDir);
+    // let angle = Math.acos(-dot);
+    // let normAngle = angle / Math.PI;
+    // let degAngle = normAngle / 180;
+    // console.log();
+    // console.log(angle / (Math.PI / 180));
+    // console.speak((angle / Math.PI).toFixed(1))
+    
     // console.log(this.energy);
     this.energyIndicators.forEach(indicator => indicator.setAttribute('energy-indicator', {value: this.energy}));
   },
   slowTick: function (t, dt) {
-    // Check if grabber is very close to stone
     // console.log('SLOW TICK');
-    // console.log(this.grabber.object3D.position.distanceTo(this.lostStone.object3D.position));
     this.energy-=20;
-    if(this.lastFinish > 5000 && this.grabber.object3D.position.distanceTo(this.lostStone.object3D.position) < 0.1) {
+    if(this.lastFinish > 5000 && this.magicLight.object3D.position.distanceTo(this.lostStone.object3D.position) < 0.1) {
       this.nextLevel();
     }
     
@@ -153,12 +182,12 @@ let gameStateSystem = AFRAME.registerSystem('game-state', {
       
       
     } else {
-
+      
     }
     
     this.data.level++;
     this.lastFinish = 0;
-  
+    
     speak('You have found the lost stone. Next Level!');
     console.info('NEXT LEVEL', this.data.level);
     this.levelEntity.setAttribute('level', {difficulty: this.data.level});
