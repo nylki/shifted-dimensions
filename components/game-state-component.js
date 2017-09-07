@@ -22,10 +22,11 @@ let gameStateSystem = AFRAME.registerSystem('game-state', {
     this.sceneEl = document.querySelector('a-scene');
     this.camera = document.getElementById('camera');
     this.levelEntity = document.getElementById('level');
-    this.lostStone = document.getElementById('lostStone');
-    console.log(this.lostStone);
+    this.lostStones = Array.from(document.querySelectorAll('.lostStone'));
     this.magicLight = document.querySelector('#magicLight');
+
     this.wallContainer = document.querySelector('#wallContainer');
+    this.stoneContainer = document.getElementById('stoneContainer');
 
     this.energyIndicators = document.querySelectorAll('.energyIndicator');
     this.lastSlowTick = 0;
@@ -116,14 +117,9 @@ let gameStateSystem = AFRAME.registerSystem('game-state', {
   tick: function (time, timeDelta) {
     this.lastFinish += timeDelta;
     this.time = time;
-    if(this.energy <= 0 && this.lostGame === false) {
-      this.lostGame = true;
-      this.endGame();
-      return;
-    }
-    
-    if(this.magicLight.triggerPressed) {
-      this.energy--;
+    if(this.magicLight.components['magic-light'].triggerPressed) {
+      // console.log(this.energy);
+      this.energy-=10;
     }
     
     
@@ -158,14 +154,30 @@ let gameStateSystem = AFRAME.registerSystem('game-state', {
     // console.log();
     // console.log(angle / (Math.PI / 180));
     // console.speak((angle / Math.PI).toFixed(1))
+
+    this.magicLight.setAttribute('magic-light', {energy: this.energy});
     
-    // console.log(this.energy);
-    this.energyIndicators.forEach(indicator => indicator.setAttribute('energy-indicator', {value: this.energy}));
   },
   slowTick: function (t, dt) {
     // console.log('SLOW TICK');
-    this.energy-=20;
-    if(this.lastFinish > 5000 && this.magicLight.object3D.position.distanceTo(this.lostStone.object3D.position) < 0.1) {
+    this.energy-=10;
+    
+    console.log(this.lostStones.length);
+    
+    for (var i = this.lostStones.length-1; i >= 0; i--) {
+      let lostStone = this.lostStones[i];
+      if(this.magicLight.object3D.position.distanceTo(lostStone.object3D.position) < 0.1) {
+        this.lostStones.splice(i, 1);
+        lostStone.parentNode.removeChild(lostStone);
+      }
+    }
+
+    if(this.energy <= 0 && this.lostGame === false) {
+      this.lostGame = true;
+      this.endGame();
+      return;
+    }
+    if(this.lastFinish > 5000 && this.lostStones.length === 0) {
       this.nextLevel();
     }
     
@@ -175,6 +187,7 @@ let gameStateSystem = AFRAME.registerSystem('game-state', {
   },
   nextLevel: function () {
     this.lostGame = false;
+    this.energy = STARTENERGY;
     if(this.data.level === -1) {
       // Player finished first instructions and intro
     } else if (this.data.level === 0) {
@@ -194,6 +207,7 @@ let gameStateSystem = AFRAME.registerSystem('game-state', {
     
   }, endGame: function () {
     speak('Your energy is depleted. You lost. Do you want to try again?');
+    this.nextLevel(); // HACK: provisional until proper lost screen
     // TODO: show menu with: start from level 0; retry current level; exit vr;
     
   }

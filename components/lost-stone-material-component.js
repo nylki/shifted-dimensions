@@ -19,10 +19,10 @@ const fragmentShader = `
 #define PI 3.1415926538
 
 uniform float u_time;
+uniform vec3 color;
 uniform vec2 u_resolution;
 uniform vec3 u_controllerPos;
 uniform vec3 u_controllerLookDir;
-uniform vec3 u_stonePos;
 uniform bool u_controllerActive;
 uniform float u_triggerDuration;
 
@@ -31,9 +31,7 @@ varying vec4 worldPosition;
 void main(void)
 {
   vec3 controllerDir = u_controllerPos - worldPosition.xyz;
-  vec3 stoneDir = u_stonePos - worldPosition.xyz;
   float dist = length(controllerDir) * 0.15;
-  float stoneDist = length(stoneDir) * 0.3;
 	// vec2 uv = gl_FragCoord.xy / u_resolution.xy;
   
 
@@ -41,20 +39,18 @@ void main(void)
   float dot = dot(u_controllerLookDir, controllerDir);
   float angle = acos(dot) / PI;
   
-  
-  
-  vec3 color = vec3(0.0, 0.0, 0.0);
   if(!u_controllerActive) {
-      angle = 0.01;
+      angle = 1.0;
   }
-  gl_FragColor = vec4(vec3(1.0, stoneDist, stoneDist),  (1.0 - angle));
+  float sharpAngle = smoothstep(0.0, 0.2, angle);
+  gl_FragColor = vec4(color,  (1.0 - sharpAngle));
   
 }
 `;
 
 let lostStoneMaterial = AFRAME.registerComponent('lost-stone-material', {
   schema: {
-    // Add properties.
+    color: {default: 'rgb(14, 128, 159)'}
   },
   init: function () {
     this.sceneEl = document.querySelector('a-scene');
@@ -67,7 +63,6 @@ let lostStoneMaterial = AFRAME.registerComponent('lost-stone-material', {
         color: { value: new THREE.Color(data.color) },
         u_controllerPos: {value: this.gameState.magicLight.object3D.position},
         u_controllerLookDir: {value: this.gameState.magicLight.object3D.getWorldDirection()},
-        u_stonePos: {value: this.gameState.lostStone.object3D.position},
         u_controllerActive: {value: this.gameState.magicLight.triggerPressed},
         u_triggerDuration: {value: this.gameState.time - this.gameState.magicLight.triggerTime}
 
@@ -99,7 +94,6 @@ let lostStoneMaterial = AFRAME.registerComponent('lost-stone-material', {
     }
     
     this.material.uniforms.u_time.value = t / 1000;
-    this.material.uniforms.u_stonePos.value = this.gameState.lostStone.object3D.position;
     this.material.uniforms.u_controllerPos.value = this.gameState.magicLight.object3D.position;
     this.material.uniforms.u_controllerLookDir.value = this.gameState.magicLight.object3D.getWorldDirection();
     let triggerPressed = this.gameState.magicLight.components['magic-light'].triggerPressed;
