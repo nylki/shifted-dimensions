@@ -25,14 +25,16 @@ uniform vec3 u_controllerPos;
 uniform vec3 u_controllerLookDir;
 uniform bool u_controllerActive;
 uniform float u_triggerDuration;
+uniform vec3 u_velocity;
 
 varying vec4 worldPosition;
+varying vec2 vUv;
 
 void main(void)
 {
+  vec2 st = gl_FragCoord.xy / u_resolution.xy;
   vec3 controllerDir = u_controllerPos - worldPosition.xyz;
   float dist = length(controllerDir) * 0.15;
-	// vec2 uv = gl_FragCoord.xy / u_resolution.xy;
   
 
   controllerDir = normalize(controllerDir);
@@ -40,10 +42,12 @@ void main(void)
   float angle = acos(dot) / PI;
   
   if(!u_controllerActive) {
-      angle = 1.0;
+      angle = 1.0 - length(u_velocity) * 800.0;
   }
+  vec3 colorB = vec3(vUv.x, vUv.y, 0.0);
+  vec3 finalColor = mix(color, colorB, sin(u_time * u_velocity * 10.0));
   float sharpAngle = smoothstep(0.0, 0.2, angle);
-  gl_FragColor = vec4(color,  (1.0 - sharpAngle));
+  gl_FragColor = vec4(finalColor,  (1.0 - sharpAngle));
   
 }
 `;
@@ -64,7 +68,8 @@ let lostStoneMaterial = AFRAME.registerComponent('lost-stone-material', {
         u_controllerPos: {value: this.gameState.magicLight.object3D.position},
         u_controllerLookDir: {value: this.gameState.magicLight.object3D.getWorldDirection()},
         u_controllerActive: {value: this.gameState.magicLight.triggerPressed},
-        u_triggerDuration: {value: this.gameState.time - this.gameState.magicLight.triggerTime}
+        u_triggerDuration: {value: this.gameState.time - this.gameState.magicLight.triggerTime},
+        u_velocity: {value: new THREE.Vector3(0,0,0)}
 
       },
       vertexShader,
@@ -94,6 +99,7 @@ let lostStoneMaterial = AFRAME.registerComponent('lost-stone-material', {
     }
     
     this.material.uniforms.u_time.value = t / 1000;
+    this.material.uniforms.u_velocity.value = this.el.components['physics-body'].velocity;
     this.material.uniforms.u_controllerPos.value = this.gameState.magicLight.object3D.position;
     this.material.uniforms.u_controllerLookDir.value = this.gameState.magicLight.object3D.getWorldDirection();
     let triggerPressed = this.gameState.magicLight.components['magic-light'].triggerPressed;

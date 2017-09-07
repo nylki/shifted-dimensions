@@ -34,13 +34,14 @@ let magicLight = AFRAME.registerComponent('magic-light', {
         
     this.energyText.setAttribute('text', {
       value: `Energy: ${this.data.energy}`,
-      width: this.energyIndicatorDimensions.depth
+      color: 'rgb(50, 0,50)',
+      width: this.energyIndicatorDimensions.depth * 1.6
     });
     this.energyText.setAttribute('rotation', 'y', -90);
     this.energyText.setAttribute('position', {
-      x: -this.hullDimensions.width / 2,
+      x:( -this.hullDimensions.width / 2) - 0.003,
       y: 0,
-      z: 0.005 + ((this.energyIndicatorDimensions.depth / 2) - this.energyIndicatorDimensions.depth/8)
+      z: 0.045 + ((this.energyIndicatorDimensions.depth / 2) - this.energyIndicatorDimensions.depth/8)
     });
     energyIndicator.appendChild(this.energyText);
     baseHull.appendChild(energyIndicator);
@@ -69,27 +70,6 @@ let magicLight = AFRAME.registerComponent('magic-light', {
     
     this.triggerPressed = false;
     this.triggerTime = -1;
-    
-    // this.el.addEventListener('raycaster-intersection', function (e) {
-    //   //console.log(e);
-    //   if(e.detail.intersections[0].object.el.id === 'lostStone') {
-    //     console.log('still hovering lostStone');
-    //
-    //   }
-    // });
-    this.el.addEventListener('mousedown', (e) => {
-      say('mousedown on lost stone');
-    });
-    this.el.addEventListener('mouseenter', (e) => {
-      if(e.detail.intersectedEl.id === 'lostStone') {
-        this.gameState.hoveringStone = true;
-      }
-    });
-    this.el.addEventListener('mouseleave', (e) => {
-      if(e.detail.intersectedEl.id === 'lostStone') {
-        this.gameState.hoveringStone = false;
-      }
-    });
   
     // this.el.addEventListener('buttonchanged', this.onButtonChanged.bind(this));
     this.el.addEventListener('buttondown', () => {
@@ -135,7 +115,7 @@ let magicLight = AFRAME.registerComponent('magic-light', {
     this.energyIndicator.setAttribute('geometry', 'depth',
       this.energyIndicatorDimensions.depth * (energy / this.data.maxEnergy)
     );
-    this.textTemplate = energy <= 2000 ? `${energy}` : `Energy: ${energy}`;
+    this.textTemplate = energy <= 3500 ? `${energy}` : `Energy: ${energy}`;
     this.energyIndicator.setAttribute('position', {
       x: 0,
       y: 0,

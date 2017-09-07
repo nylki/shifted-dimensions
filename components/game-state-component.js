@@ -110,6 +110,18 @@ let gameStateSystem = AFRAME.registerSystem('game-state', {
       this.headCollisionDistance = 999;
     });
     
+    
+    
+    this.magicLight.addEventListener('raycaster-intersection', (e) => {
+      if(this.magicLight.components['magic-light'].triggerPressed) {
+        // add acceleration of intersected stone towards magic light
+        let stone = e.detail.els[0];
+        let magicLightPos = this.magicLight.object3D.position.clone();
+        let dir = magicLightPos.sub(stone.object3D.position).normalize();
+        stone.components['physics-body'].velocity.add(dir.multiplyScalar(0.001));
+      }
+    });
+    
     this.slowTick = AFRAME.utils.throttle(this.slowTick, SLOWTICKDELAY, this);
     this.wallTouchWarning = AFRAME.utils.throttle(this.wallTouchWarning, 4000, this);
     
@@ -169,6 +181,7 @@ let gameStateSystem = AFRAME.registerSystem('game-state', {
       if(this.magicLight.object3D.position.distanceTo(lostStone.object3D.position) < 0.1) {
         this.lostStones.splice(i, 1);
         lostStone.parentNode.removeChild(lostStone);
+        this.energy = STARTENERGY;
       }
     }
 

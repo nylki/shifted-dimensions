@@ -11,9 +11,7 @@
 	<a-scene debug stats game-state pseudo-physics>
 		
 		<a-assets>
-		<a-mixin id="line" geometry="primitive: box; height: 0.2; width: 0.4; depth: 0.2;" material=""></a-mixin>
-
-		<a-mixin id="blue" material="color: #45b5c8;"></a-mixin>
+			<a-mixin id="line" geometry="primitive: box; height: 0.1; width: 0.75; depth: 0.1;"></a-mixin>
 		
 </a-assets>
 		
@@ -26,7 +24,7 @@
 		</a-entity>
 				
 		<a-entity id="magicLight" raycaster="far: 10; interval:200; showLine: true; objects:.lostStone" magic-light="hand: right">
-			<!-- <a-entity position="0 0.02 0" rotation="0 0 0" class="energyIndicator" energy-indicator="width: 0.2; height: 0.05"></a-entity> -->
+	f
 		</a-entity>
 	
 		
@@ -41,7 +39,7 @@
 	
 	<!-- <a-entity id="leftHand" hand-controls="left"> -->
 	
-	<a-box id="floor" material="transparent:true; opacity: 0.5" physics-body="mass:0.0; collidesOthers:true" depth="10" height="0.1" width="10" position="0 0 0" rotation="0 0 0" color="#5b3d2b"></a-box>
+	<a-box id="floor" material="shader:flat;" physics-body="mass:0.0; collidesOthers:true" depth="2" height="0.1" width="2" position="0 0 0" rotation="0 0 0" color="#9d6857"></a-box>
 
 	
 	<a-entity id="level" level="difficulty:-1" position="0 0 0">
@@ -60,9 +58,10 @@
 			<a-box class="wall" labyrinth-material="color:#93b872" physics-body="mass:0.0; collidesOthers:true" depth="0.5" height="1.25" width="0.5" position="0 0 0" rotation="0 0 0"></a-box>
 			
 			<a-animation attribute="rotation"
-						 dur="40000"
+						 dur="60000"
 						 fill="forwards"
 						 to="0 360 0"
+						 easing="linear"
 						 repeat="indefinite"></a-animation>
 			</a-entity>
 		

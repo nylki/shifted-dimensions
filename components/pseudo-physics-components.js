@@ -9,7 +9,8 @@ export {pseudoPhysicsSystem, physicsBodyComponent};
 
 let pseudoPhysicsSystem = AFRAME.registerSystem('pseudo-physics', {
   schema: {
-    gravity: {type: 'vec3', default: new THREE.Vector3(0, -0.001, 0)}
+    gravity: {type: 'vec3', default: new THREE.Vector3(0, -0.001, 0)},
+    drag: {type: 'number', default: 0.9982}
   },
   init: function () {
     this.children = [];
@@ -18,6 +19,7 @@ let pseudoPhysicsSystem = AFRAME.registerSystem('pseudo-physics', {
     this.futureChildBox = new THREE.Box3();
     this.futureColliderBox = new THREE.Box3();
     this.futureBSphere = new THREE.Sphere();
+    
   },
   tick: function () {
     for (let child of this.children) {
@@ -44,7 +46,8 @@ let pseudoPhysicsSystem = AFRAME.registerSystem('pseudo-physics', {
             // console.log(child.velocity.length());
             
           }
-
+          child.velocity.multiplyScalar(this.data.drag);
+          if(child.velocity.length() < 0.000001) child.velocity.set(0,0,0);
           this.futurePos.copy(child.el.object3D.position).add(child.velocity);
         }
       }

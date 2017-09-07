@@ -384,6 +384,7 @@ let lsystem = AFRAME.registerComponent('lsystem', {
                 // see: http://stackoverflow.com/questions/28848863/threejs-how-to-rotate-around-objects-own-center-instead-of-world-center
                 segmentObject.geometry.translate(translation.x, translation.y, translation.z);
                 self.segmentObjects3DMap.set(symbol + mixinColorIndex, segmentObject );
+                
 
               }
 
@@ -399,6 +400,19 @@ let lsystem = AFRAME.registerComponent('lsystem', {
             }
 
             this.segmentElementGroupsMap.set(symbol + mixinColorIndex, segmentElGroup);
+            
+            // HACK!
+            //
+            //
+            //
+            
+            segmentElGroup.setAttribute('labyrinth-material', {color: "#93b872"});
+            
+            // HACK!
+            //
+            //
+            //
+            
             this.el.appendChild(segmentElGroup);
 
 

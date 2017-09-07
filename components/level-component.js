@@ -37,7 +37,7 @@ let levelComponent = AFRAME.registerComponent('level', {
   },
   getNewStone: function (w,h,d) {
     let stone = document.createElement('a-box');
-    stone.classList.add('stone');
+    stone.classList.add('lostStone');
     stone.setAttribute('geometry', {
       width: w,
       height: h,
@@ -45,7 +45,7 @@ let levelComponent = AFRAME.registerComponent('level', {
     });
     stone.setAttribute('physics-body', {
       mass:0.00,
-      collidesOthers: false
+      collidesOthers: true
     });
     stone.setAttribute('lost-stone-material', '');
     return stone;
@@ -57,7 +57,33 @@ let levelComponent = AFRAME.registerComponent('level', {
     // Skip level -1 because it is assumed predefined in the HTML
     if(difficulty === -1) return;
     if(difficulty === 0) {
+      
+      
+      
       this.wallContainer.innerHTML = '';
+      let labyrinth = document.createElement('a-entity');
+      labyrinth.setAttribute('lsystem', {
+        axiom: 'X',
+        productions: 'X:^<XF^<XFX-F^>>XFX&F+>>XFX-F>X->',
+        segmentMixins: 'F:line',
+        angle: 90,
+        iterations: 3,
+        translateAxis: 'X',
+        mergeGeometries: true
+        
+      });
+      
+      //
+      // setTimeout(() => {
+      //   console.log(labyrinth);
+      //   labyrinth.childNodes[0].setAttribute('labyrinth-material', '');
+      // }, 5000);
+            
+      this.wallContainer.appendChild(labyrinth);
+      
+      
+      
+      
       //create some walls and place the lost stone
       console.log('Create new walls!');
       for (let i = 0; i < 50; i++) {
