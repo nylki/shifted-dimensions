@@ -86,7 +86,7 @@ let gameStateSystem = AFRAME.registerSystem('game-state', {
     this.distortion.curve = makeDistortionCurve(400);
     this.distortion.oversample = '4x';
     
-    this.oscillator.start();
+    // this.oscillator.start();
     
     
     

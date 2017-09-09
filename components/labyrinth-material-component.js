@@ -26,7 +26,7 @@ uniform vec3 u_controllerLookDir;
 uniform bool u_controllerActive;
 uniform float u_triggerDuration;
 
-
+varying vec2 vUv;
 varying vec4 worldPosition;
 
 void main(void)
