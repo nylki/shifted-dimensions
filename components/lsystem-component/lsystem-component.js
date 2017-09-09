@@ -406,7 +406,7 @@ let lsystem = AFRAME.registerComponent('lsystem', {
             //
             //
             
-            segmentElGroup.setAttribute('labyrinth-material', {color: "#93b872"});
+            segmentElGroup.setAttribute('labyrinth-material', {color: '#93b872'});
             
             // HACK!
             //

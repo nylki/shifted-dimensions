@@ -52,16 +52,16 @@ void main(void)
   float planeAngle = atan(toCenter.y,toCenter.x);
   float planeDist = distance(vUv, vec2(0.5)) * 2.0;
   
-  float num = 5.0;
-  float color = abs(sin(planeAngle * num/2.0));
+  float num = 10.0;
+  float grayscale = abs(sin(planeAngle * num/2.0));
 
-  color = mix(color, planeDist, sin(u_time) * 2.0);
+  grayscale = mix(grayscale, planeDist, sin(u_time * 2.0) * 2.0);
   
-  vec3 mask = vec3(step(color, 0.5));
+  vec3 mask = vec3(step(grayscale, 0.5));
   
   // Final color is the mask, transparency too, but is scaled by angle to controller
   // and speed of stone
-  gl_FragColor = vec4(mask,  mask.x * (1.0 - sharpAngle));
+  gl_FragColor = vec4(mask * color,  mask.x * (1.0 - sharpAngle));
   
   
   

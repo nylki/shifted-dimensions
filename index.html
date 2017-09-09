@@ -12,7 +12,7 @@
 		
 		<a-assets>
 			<a-mixin id="line" geometry="primitive: box; height: 0.1; width: 0.75; depth: 0.1;"></a-mixin>
-		
+			<a-mixin id="sphere" geometry="primitive: sphere; radius: 0.1; segmentsWidth: 4; segmentsHeight: 4"></a-mixin>
 </a-assets>
 		
 		<a-sky color="rgba(88, 137, 173, 1)"> </a-sky>
@@ -46,9 +46,9 @@
 		
 		<a-entity id="stoneContainer">
 		
-			<a-box class="lostStone" physics-body="mass:0.0; collidesOthers: true; collidesAgainst:true" lost-stone-material width="0.025" height="0.025" depth="0.025" position="0 1 0" rotation="-5 10 17"></a-box>
+			<a-entity mixin="sphere" class="lostStone" physics-body="mass:0.0; collidesOthers: true; collidesAgainst:true" lost-stone-material position="0 1 0" rotation="-5 10 17"></a-entity>
 			
-			<a-box class="lostStone" physics-body="mass:0.0; collidesOthers: true; collidesAgainst:true" lost-stone-material width="0.015" height="0.035" depth="0.025" position="0.5 1 0" rotation="-20 100 17"></a-box>
+			<a-entity mixin="sphere" class="lostStone" physics-body="mass:0.0; collidesOthers: true; collidesAgainst:true" lost-stone-material position="0.5 1 0" rotation="-20 100 17"></a-entity>
 		
 		</a-entity>
 
