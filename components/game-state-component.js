@@ -9,13 +9,13 @@ export {gameStateSystem};
 
 const maxFreq = 500;
 const maxVol = 0.1;
-const SLOWTICKDELAY = 500;
-const STARTENERGY = 10000;
+const SLOWTICKDELAY = 250;
+const STARTENERGY = 12000;
 
 
 let gameStateSystem = AFRAME.registerSystem('game-state', {
   schema: {
-    level: {type: 'number', default: -1}
+    level: {type: 'number', default: 1}
   },
   init: function () {
     
@@ -28,16 +28,13 @@ let gameStateSystem = AFRAME.registerSystem('game-state', {
     this.wallContainer = document.querySelector('#wallContainer');
     this.stoneContainer = document.getElementById('stoneContainer');
 
-    this.energyIndicators = document.querySelectorAll('.energyIndicator');
     this.lastSlowTick = 0;
     this.lastFinish = 0; // the time since the player progressed to the new level
     
     this.lostGame = false;
+    this.stoneCollectTime = undefined;
     this.energy = STARTENERGY;
-    
-    this.headCollisionDistance = 999;
-    this.headCollisionDuration = -1;
-    this.headCollisionStarted = -1;
+    this.energyLowCondition = false;
     
     // Pre-create some vectors to avoid doing that in tick()'s
     this.dirLightStone = new THREE.Vector3();
@@ -86,27 +83,9 @@ let gameStateSystem = AFRAME.registerSystem('game-state', {
     this.distortion.curve = makeDistortionCurve(400);
     this.distortion.oversample = '4x';
     
-    // this.oscillator.start();
-    
-    
-    
-    this.camera.addEventListener('raycaster-intersection', (e) => {
-      if(this.headCollisionDuration !== -1) {
-        this.headCollisionStarted = this.time;
-      }
-      this.headCollisionDistance = e.detail.intersections[0].distance;
-      this.headCollisionDuration = this.time - this.headCollisionStarted;
-      if(this.headCollisionDistance < 0.2) {
-        this.wallTouchWarning();
-      }
-    });
-    
-    this.camera.addEventListener('raycaster-intersection-cleared', (e) => {
-      console.log('HEAD TOUCHED THE WALL!!', this.headCollisionDuration);
-      this.headCollisionDuration = this.headCollisionStarted = -1;
-      this.headCollisionDistance = 999;
-    });
-    
+    this.oscillator.start();
+  
+
     
     
     this.magicLight.addEventListener('raycaster-intersection', (e) => {
@@ -120,66 +99,47 @@ let gameStateSystem = AFRAME.registerSystem('game-state', {
     });
     
     this.slowTick = AFRAME.utils.throttle(this.slowTick, SLOWTICKDELAY, this);
-    this.wallTouchWarning = AFRAME.utils.throttle(this.wallTouchWarning, 4000, this);
     
   },
   tick: function (time, timeDelta) {
     this.lastFinish += timeDelta;
     this.time = time;
     if(this.magicLight.components['magic-light'].triggerPressed) {
-      // console.log(this.energy);
-      this.energy-=10;
+      this.energy-=8;
     }
     
     
-    // let vel = this.lostStone.components['physics-body'].velocity.length();
-    // this.dirLightStone.copy(this.magicLight.object3D.position).sub(this.lostStone.object3D.position);
-    // let controllerDistSound = this.dirLightStone.length() * maxFreq;
-    // let stoneSpeedSound = maxFreq * vel * 100.0;
-    // let baseFreq = maxFreq;
-    // this.oscillator.frequency.value = Math.min((1/3) * (baseFreq + controllerDistSound + stoneSpeedSound), maxFreq);
     let r = 1 - Math.round(Math.random() * 20) / 200; // ca. 0.9 - 1.0
     let baseFreq = 100;
-    // console.log(r);
-    this.oscillator.frequency.value = r*baseFreq + ((Math.sin(time * 0.005)) * baseFreq);
-    this.gainNode.gain.value =  0.5;//0.03 * Math.max(0.0, 1.0 - this.headCollisionDistance);
+
+    this.gainNode.gain.value =  0.00;
+    if(this.stoneCollectTime !== undefined && time - this.stoneCollectTime < 2500) {
+      this.oscillator.frequency.value = r*baseFreq + ((Math.sin((time - this.stoneCollectTime) * 0.0005)) * baseFreq);
+      this.gainNode.gain.value =  0.05;
+    }
     
     this.slowTick();
-    
-    // // Calculate angle between controller direction and stone, relative to controller
-    // let controllerPos = this.magicLight.object3D.position.clone();
-    // let stonePos = this.lostStone.object3D.position.clone();
-    //
-    // let controllerLookDir = this.magicLight.object3D.getWorldDirection();
-    //
-    // let stoneControllerDir = new THREE.Vector3().subVectors(stonePos, controllerPos);
-    //
-    // controllerLookDir.normalize();
-    // stoneControllerDir.normalize();
-    // let dot = controllerLookDir.dot(stoneControllerDir);
-    // let angle = Math.acos(-dot);
-    // let normAngle = angle / Math.PI;
-    // let degAngle = normAngle / 180;
-    // console.log();
-    // console.log(angle / (Math.PI / 180));
-    // console.speak((angle / Math.PI).toFixed(1))
-
     this.magicLight.setAttribute('magic-light', {energy: this.energy});
     
   },
   slowTick: function (t, dt) {
-    // console.log('SLOW TICK');
-    this.energy-=10;
-    
-    console.log(this.lostStones.length);
-    
+    this.energy-=5;
     for (var i = this.lostStones.length-1; i >= 0; i--) {
       let lostStone = this.lostStones[i];
       if(this.magicLight.object3D.position.distanceTo(lostStone.object3D.position) < 0.1) {
         this.lostStones.splice(i, 1);
         lostStone.parentNode.removeChild(lostStone);
         this.energy = STARTENERGY;
+        this.energyLowCondition = false;
+        
+        this.stoneCollectTime = this.time;
+        if(this.lostStones.length !== 0) speak(`${this.lostStones.length} stones remaining.`);
       }
+    }
+    
+    if(!this.energyLowCondition && this.energy < STARTENERGY * 0.2) {
+      speak('Energy is low.');
+      this.energyLowCondition = true;
     }
 
     if(this.energy <= 0 && this.lostGame === false) {
@@ -188,36 +148,31 @@ let gameStateSystem = AFRAME.registerSystem('game-state', {
       return;
     }
     if(this.lastFinish > 5000 && this.lostStones.length === 0) {
+      speak('You have found the lost stone. Next Level!');
       this.nextLevel();
     }
     
   },
-  wallTouchWarning: function () {
-    speak('dont touch the walls!');
-  },
-  nextLevel: function () {
-    this.lostGame = false;
+  nextLevel: function (lost) {
+    this.energyLowCondition = false;
     this.energy = STARTENERGY;
-    if(this.data.level === -1) {
-      // Player finished first instructions and intro
-    } else if (this.data.level === 0) {
-      // player finished super easy level
-      
-      
+    this.lastFinish = 0;
+    this.stoneCollectTime = undefined;
+    
+    if(!this.lostGame) {
+      this.data.level++;
+      this.levelEntity.setAttribute('level', {difficulty: this.data.level});
     } else {
-      
+      this.levelEntity.components['level'].reloadLevel();
     }
     
-    this.data.level++;
-    this.lastFinish = 0;
+    this.lostGame = false;
     
-    speak('You have found the lost stone. Next Level!');
-    console.info('NEXT LEVEL', this.data.level);
-    this.levelEntity.setAttribute('level', {difficulty: this.data.level});
     
   }, endGame: function () {
-    speak('Your energy is depleted. You lost. Do you want to try again?');
-    this.nextLevel(); // HACK: provisional until proper lost screen
+    speak('Enery depleted. You lost. Restart current level.');
+    this.lostGame = true;
+    this.nextLevel();
     // TODO: show menu with: start from level 0; retry current level; exit vr;
     
   }

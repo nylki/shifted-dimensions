@@ -72,7 +72,7 @@ void main(void)
 
 let labyrinthMaterial = AFRAME.registerComponent('labyrinth-material', {
   schema: {
-    // Add properties.
+    color: {default: 'rgb(192, 214, 145)'}
   },
   init: function () {
     this.sceneEl = document.querySelector('a-scene');
@@ -86,7 +86,8 @@ let labyrinthMaterial = AFRAME.registerComponent('labyrinth-material', {
         u_controllerPos: {value: this.gameState.magicLight.object3D.position},
         u_controllerLookDir: {value: this.gameState.magicLight.object3D.getWorldDirection()},
         u_controllerActive: {value: this.gameState.magicLight.triggerPressed},
-        u_triggerDuration: {value: this.gameState.time - this.gameState.magicLight.triggerTime}
+        u_triggerDuration: {value: this.gameState.time - this.gameState.magicLight.triggerTime},
+        u_cameraPos: {value: this.gameState.camera.object3D.position}
 
 
       },
@@ -108,11 +109,11 @@ let labyrinthMaterial = AFRAME.registerComponent('labyrinth-material', {
     }
   },
   tick: function (t, timeDelta) {
-    // console.log(JSON.stringify(this.camera.object3D.position));
-    
     this.material.uniforms.u_time.value = t / 1000;
     this.material.uniforms.u_controllerPos.value = this.gameState.magicLight.object3D.position;
     this.material.uniforms.u_controllerLookDir.value = this.gameState.magicLight.object3D.getWorldDirection();
+    this.material.uniforms.u_cameraPos = this.gameState.camera.object3D.position;
+    
     
     let triggerPressed = this.gameState.magicLight.components['magic-light'].triggerPressed;
     this.material.uniforms.u_controllerActive.value = triggerPressed;
@@ -121,12 +122,6 @@ let labyrinthMaterial = AFRAME.registerComponent('labyrinth-material', {
       this.material.transparent = true;
       this.material.uniforms.u_triggerDuration.value = this.gameState.time - this.gameState.magicLight.components['magic-light'].triggerTime;
     }
-  
 
-  
-    
-    
-
-    // add more uniforms like magic light dir and pos
   }
 });

@@ -5,7 +5,7 @@ let magicLight = AFRAME.registerComponent('magic-light', {
   schema: {
     hand: {default: ''},
     energy: {type: 'number', default: 10000},
-    maxEnergy: {type: 'number', default: 10000}
+    maxEnergy: {type: 'number', default: 12000}
     },
     
   createModel: function () {
@@ -30,20 +30,20 @@ let magicLight = AFRAME.registerComponent('magic-light', {
     energyIndicator.setAttribute('position', {x:0, y:0, z:0});
     energyIndicator.setAttribute('material', {color: 'rgb(14, 128, 159)', transparent: false});
 
-    this.energyText = document.createElement('a-entity');
+    // this.energyText = document.createElement('a-entity');
         
-    this.energyText.setAttribute('text', {
-      value: `Energy: ${this.data.energy}`,
-      color: 'rgb(50, 0,50)',
-      width: this.energyIndicatorDimensions.depth * 1.6
-    });
-    this.energyText.setAttribute('rotation', 'y', -90);
-    this.energyText.setAttribute('position', {
-      x:( -this.hullDimensions.width / 2) - 0.003,
-      y: 0,
-      z: 0.045 + ((this.energyIndicatorDimensions.depth / 2) - this.energyIndicatorDimensions.depth/8)
-    });
-    energyIndicator.appendChild(this.energyText);
+    // this.energyText.setAttribute('text', {
+    //   value: `Energy: ${this.data.energy}`,
+    //   color: 'rgb(50, 0,50)',
+    //   width: this.energyIndicatorDimensions.depth * 1.6
+    // });
+    // this.energyText.setAttribute('rotation', 'y', -90);
+    // this.energyText.setAttribute('position', {
+    //   x:( -this.hullDimensions.width / 2) - 0.003,
+    //   y: 0,
+    //   z: 0.045 + ((this.energyIndicatorDimensions.depth / 2) - this.energyIndicatorDimensions.depth/8)
+    // });
+    // energyIndicator.appendChild(this.energyText);
     baseHull.appendChild(energyIndicator);
     this.el.appendChild(baseHull);
     
@@ -123,7 +123,7 @@ let magicLight = AFRAME.registerComponent('magic-light', {
     });
     
     this.energyIndicator.setAttribute('material', {color: `hsl(${relEnergy * 130}, 41%, 58%)`});
-    this.energyText.setAttribute('text', {value: this.textTemplate});
+    // this.energyText.setAttribute('text', {value: this.textTemplate});
   }
     
     

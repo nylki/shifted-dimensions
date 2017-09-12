@@ -6,6 +6,8 @@ varying vec2 vUv;
 varying vec4 worldPosition;
 varying vec3 u_cameraPos;
 
+
+
 void main() {
   vUv = uv;
   worldPosition = modelMatrix * vec4(position, 1.0);
@@ -61,7 +63,9 @@ void main(void)
   
   // Final color is the mask, transparency too, but is scaled by angle to controller
   // and speed of stone
-  gl_FragColor = vec4(mask * color,  mask.x * (1.0 - sharpAngle));
+  vec3 colorRainbow = vec3(sin(u_time), sin(u_time * 2.), length(toCenter));
+  colorRainbow = mix(colorRainbow, color, 0.7);
+  gl_FragColor = vec4(mask * colorRainbow,  mask.x * (1.0 - sharpAngle));
   
   
   
@@ -109,12 +113,6 @@ let lostStoneMaterial = AFRAME.registerComponent('lost-stone-material', {
     }
   },
   tick: function (t, timeDelta) {
-    if(this.gameState.headCollisionDistance <= 0.2 && this.material.visible === true) {
-      this.material.visible = false;
-    } else if (this.material.visible === false && this.gameState.headCollisionStarted === -1) {
-      this.material.visible = true;
-    }
-    
     this.material.uniforms.u_time.value = t / 1000;
     this.material.uniforms.u_velocity.value = this.el.components['physics-body'].velocity;
     this.material.uniforms.u_controllerPos.value = this.gameState.magicLight.object3D.position;
@@ -125,9 +123,6 @@ let lostStoneMaterial = AFRAME.registerComponent('lost-stone-material', {
       this.material.uniforms.u_triggerDuration.value = this.gameState.time - this.gameState.magicLight.triggerTime;
     }
   
-    
-    
 
-    // add more uniforms like magic light dir and pos
   }
 });
