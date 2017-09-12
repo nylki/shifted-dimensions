@@ -10,7 +10,7 @@ export {pseudoPhysicsSystem, physicsBodyComponent};
 let pseudoPhysicsSystem = AFRAME.registerSystem('pseudo-physics', {
   schema: {
     gravity: {type: 'vec3', default: new THREE.Vector3(0, -0.001, 0)},
-    drag: {type: 'number', default: 0.9982}
+    drag: {type: 'number', default: 0.996}
   },
   init: function () {
     this.children = [];
@@ -30,36 +30,40 @@ let pseudoPhysicsSystem = AFRAME.registerSystem('pseudo-physics', {
       
       // Check for collision
       if(child.data.collidesAgainst) {
+        
+        
+        //
+        // INFO: Planned to have some basic collision detection and bouncing of surfaces
+        // but scrapped it for the final version. You can still check out the commented code below:
+        //
+        //
+        //
+        
         this.futureChildBox.setFromCenterAndSize(this.futurePos, child.boundingBoxSize);
-
+      
         for (let collider of this.colliders) {
           // console.log(child, collider);
           if(collider.el === child.el) continue;
           // console.log(JSON.stringify(this.futureColliderBox));
           if(this.futureChildBox.intersectsBox(collider.boundingBox)) {
-            
+      
             // more bogus physics: let the object bounce in opposite dir with 1/5 of speed
             child.velocity.multiplyScalar(-0.5);
-            
+      
             // avoid constant wobbling in collision situations
             if(child.velocity.length() < 0.001) child.velocity.set(0,0,0);
             // console.log(child.velocity.length());
-            
+      
           }
-          child.velocity.multiplyScalar(this.data.drag);
+          
           if(child.velocity.length() < 0.000001) child.velocity.set(0,0,0);
           this.futurePos.copy(child.el.object3D.position).add(child.velocity);
         }
       }
-      
+      child.velocity.multiplyScalar(this.data.drag);
       if(child.data.gravity !== 0 || child.data.collidesAgainst)
         child.el.setAttribute('position', this.futurePos);
       
-      
-
-      
-      
-
     }
   },
   add: function (child) {

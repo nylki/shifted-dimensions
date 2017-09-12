@@ -91,13 +91,11 @@ let gameStateSystem = AFRAME.registerSystem('game-state', {
     
     
     this.camera.addEventListener('raycaster-intersection', (e) => {
-      console.log('head touched wall');
       if(this.headCollisionDuration !== -1) {
         this.headCollisionStarted = this.time;
       }
       this.headCollisionDistance = e.detail.intersections[0].distance;
       this.headCollisionDuration = this.time - this.headCollisionStarted;
-      console.log(this.headCollisionDistance);
       if(this.headCollisionDistance < 0.2) {
         this.wallTouchWarning();
       }
@@ -105,7 +103,6 @@ let gameStateSystem = AFRAME.registerSystem('game-state', {
     
     this.camera.addEventListener('raycaster-intersection-cleared', (e) => {
       console.log('HEAD TOUCHED THE WALL!!', this.headCollisionDuration);
-      console.log(e);
       this.headCollisionDuration = this.headCollisionStarted = -1;
       this.headCollisionDistance = 999;
     });

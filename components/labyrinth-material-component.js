@@ -5,10 +5,12 @@ const vertexShader = `
 varying vec2 vUv;
 varying vec4 worldPosition;
 varying vec3 u_cameraPos;
+varying vec3 vNormal;
 
 void main() {
   vUv = uv;
   worldPosition = modelMatrix * vec4(position, 1.0);
+  vNormal = normal;
   vec4 v = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
   gl_Position = v;
 }
@@ -28,28 +30,42 @@ uniform float u_triggerDuration;
 
 varying vec2 vUv;
 varying vec4 worldPosition;
+varying vec3 vNormal;
 
 void main(void)
 {
   vec3 controllerDir = u_controllerPos - worldPosition.xyz;
   float dist = length(controllerDir);
-	// vec2 uv = gl_FragCoord.xy / u_resolution.xy;
-  
 
+  
+  
+  float shadow = dot(vNormal, normalize(vec3(0.0, 0.3, 0.5)));
+  
+  
+  // add rippling effect to color
+  float ripple = sin(u_time + dist*5.0);
+  vec3 shadedColor = mix(color * shadow, vec3(ripple), 0.1);
+
+  
   controllerDir = normalize(controllerDir);
-  float dot = dot(u_controllerLookDir, controllerDir);
-  float angle = acos(dot) / PI;
+  float d = dot(u_controllerLookDir, controllerDir);
+  float angle = acos(d) / PI;
   
   float normDist = min(dist, 1.0);
   if(u_controllerActive == true) {
     float triggerDurSecs = u_triggerDuration / 1000.0;
     float durOpacity = max(0.3, 1.0 - triggerDurSecs * 0.4);
     float angleOpacity = angle * 10.0;
-    float opacity = max(min(normDist, 0.4),  durOpacity * angleOpacity);
-    gl_FragColor = vec4(color, opacity);
+    
+    float opacity = durOpacity * angleOpacity;
+    opacity = max(min(normDist, 0.4),  opacity);
+      
+    gl_FragColor = vec4(shadedColor, opacity);
   } else {
-    gl_FragColor = vec4(color, 1.0);
+    gl_FragColor = vec4(shadedColor, 1.0);
   }
+  
+
   
 }
 `;

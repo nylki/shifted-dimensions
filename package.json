@@ -4,11 +4,13 @@
   "description": "Entry to the js13kGames 2017 competition in the A-Frame category.",
   "main": "index.js",
   "scripts": {
+    "start": "browser-sync start --no-open --server dist",
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "concurrently -k \"browser-sync start --no-open --reload-delay 1000 --server \"dist\" -f \"dist\"\" \"watch 'npm run rollup' -d -p /dist/ --interval=2 --wait=6\"",
     "rollup": "mkdir -p dist && rollup -c && cp index.html dist/index.html",
     "minify": "uglifyjs ./dist/index.js --comments --compress --mangle -o ./dist/index.js && cp index.html dist/index.html",
-    "dist": "npm run rollup && npm run minify"
+    "dist": "npm run rollup && npm run minify",
+    "build": "npm run dist"
   },
   "repository": {
     "type": "git",

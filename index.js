@@ -1,4 +1,4 @@
-import './components/lsystem-component/lsystem-component.js';
+// import './components/lsystem-component/lsystem-component.js';
 import './components/game-state-component.js';
 import './components/level-component.js';
 import './components/pseudo-physics-components.js';

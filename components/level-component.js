@@ -3,7 +3,7 @@
 // This file/module uses named exports to export both system and component in one module.
 // This won't negatively affect file size after uglifying, because unused let statements
 // are discarded; eg: `let fooBarComponent = AFRAME.registerComponent(...)` becomes `AFRAME.registerComponent(...)`
-
+import {speak} from './speak.js';
 export {levelComponent};
 
 
@@ -38,11 +38,7 @@ let levelComponent = AFRAME.registerComponent('level', {
   getNewStone: function (w,h,d) {
     let stone = document.createElement('a-box');
     stone.classList.add('lostStone');
-    stone.setAttribute('geometry', {
-      width: w,
-      height: h,
-      depth: d
-    });
+    stone.setAttribute('mixin', 'sphere');
     stone.setAttribute('physics-body', {
       mass:0.00,
       collidesOthers: true
@@ -55,7 +51,10 @@ let levelComponent = AFRAME.registerComponent('level', {
     // Create new level
     const difficulty = this.data.difficulty;
     // Skip level -1 because it is assumed predefined in the HTML
-    if(difficulty === -1) return;
+    if(difficulty === -1) {
+      
+      // speak('Welcome! You lost your precious energy stones in a alternate dimension. Use your magic light controller to make them visible and pull them closer to you. Collect them by touching. Each stone you collect will refill your energy bar. But be careful: your magic controller will drain energy when used.');
+    }
     if(difficulty === 0) {
       
       
