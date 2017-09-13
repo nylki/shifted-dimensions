@@ -1,4 +1,4 @@
-# js13k_lost
+# Shifted Dimensions
 
 Entry to the js13kGames 2017 gamejam/competition
 
@@ -14,14 +14,14 @@ Point the light onto a stone and keep the it activated  to pull a lost stone clo
 
 You can also hear stones that are close to you.
 
-But be careful! Activating the magic light and bumping into walls will drain your remaining energy!
+But be careful! Activating the magic light will drain your energy!
 
 Have fun! :)
 
 
-## Run
+## Run with local dev server
 `npm install`
-`npm start`
+`npm run dev`
 
 ## Create 13k ZIP file
 `npm install`
