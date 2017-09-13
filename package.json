@@ -14,14 +14,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/nylki/js13k_lost.git"
+    "url": "git+https://github.com/nylki/shifted-dimensions.git"
   },
   "author": "nylki (Tom Brewe)",
   "license": "GPL-3.0",
   "bugs": {
-    "url": "https://github.com/nylki/js13k_lost/issues"
+    "url": "https://github.com/nylki/shifted-dimensions/issues"
   },
-  "homepage": "https://github.com/nylki/js13k_lost#readme",
+  "homepage": "https://github.com/nylki/shifted-dimensions#readme",
   "dependencies": {},
   "devDependencies": {
     "browser-sync": "^2.18.13",
