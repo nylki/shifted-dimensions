@@ -2,6 +2,8 @@
 
 Entry to the js13kGames 2017 gamejam/competition
 
+![](https://user-images.githubusercontent.com/1710598/30374505-7b487f10-9885-11e7-998e-d7037f2bfd15.jpg)
+
 ## How To Play
 
 You are in a weightless universe and have lost your special stones that give you energy!
