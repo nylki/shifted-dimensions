@@ -12,9 +12,7 @@ You must find them all before your remaining energy is drained.
 The stones are however invisible to the normal eye and scattered all around you.
 To make them visible, you can activate your magic light by keeping the trigger pressed.
 
-Point the light onto a stone and keep the it activated  to pull a lost stone closer to you.
-
-You can also hear stones that are close to you.
+Point the light onto a stone and keep the trigger activated to pull a lost stone closer to you.
 
 But be careful! Activating the magic light will drain your energy!
 
