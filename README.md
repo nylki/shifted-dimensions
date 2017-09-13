@@ -23,7 +23,7 @@ Have fun! :)
 `npm install`
 `npm run dev`
 
-## Create 13k ZIP file
+## Create <13k ZIP file
 `npm install`
 `npm run dist`
 Then zip the `dist` folder.
