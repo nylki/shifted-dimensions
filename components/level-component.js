@@ -19,7 +19,7 @@ let levelComponent = AFRAME.registerComponent('level', {
 
   },
   
-  getNewWall: function (w,h,d, dist) {
+  getNewWall: function (w, h, d, dist) {
     
     let wall = document.createElement('a-entity');
     wall.classList.add('wall');
@@ -43,16 +43,16 @@ let levelComponent = AFRAME.registerComponent('level', {
       z: (Math.random() * dist) -dist/2
     });
     
-    wall.setAttribute('rotation',{
-    x: Math.random() * 180,
-    y: Math.random() * 180,
-    z: Math.random() * 180
+    wall.setAttribute('rotation', {
+      x: Math.random() * 180,
+      y: Math.random() * 180,
+      z: Math.random() * 180
     });
   
     return wall;
     
   },
-  getNewStone: function (w,h,d) {
+  getNewStone: function (w, h, d) {
     let stone = document.createElement('a-entity');
     stone.classList.add('lostStone');
     stone.setAttribute('mixin', 'sphere');
@@ -71,11 +71,11 @@ let levelComponent = AFRAME.registerComponent('level', {
     // Create new level
     const difficulty = this.data.difficulty;
     // Skip level -1 because it is assumed predefined in the HTML
-    if(difficulty === 1) {
+    if (difficulty === 1) {
       
       speak('Hello! You lost your precious energy stones in a shifted dimension. Use your magic light controller to make them visible and pull them closer to you. Collect them by touching. Each stone you collect will refill your energy bar. But be careful: your magic controller will drain energy when used.');
     }
-    if(difficulty > 1) {
+    if (difficulty > 1) {
       
       this.wallContainer.innerHTML = '';
 
@@ -86,7 +86,7 @@ let levelComponent = AFRAME.registerComponent('level', {
       for (let i = 0; i < 20; i++) {
 
         
-        let wall = this.getNewWall(Math.random() + 0.5,Math.random() + 0.5,Math.random(), dist + 1);
+        let wall = this.getNewWall(Math.random() + 0.5, Math.random() + 0.5, Math.random(), dist + 1);
         wall.setAttribute('labyrinth-material', {
           color: `hsl(${Math.round(Math.random() * 360)}, ${Math.round(Math.random() * 60)}%, ${Math.round(Math.random() * 50)}%)`
         });
@@ -100,7 +100,7 @@ let levelComponent = AFRAME.registerComponent('level', {
       
       // create additional walls, the higher the level the more
       for (let i = 0; i < 35 * difficulty; i++) {
-        let wall = this.getNewWall(Math.random() + 0.5,Math.random() + 0.5,Math.random(), dist + 1);
+        let wall = this.getNewWall(Math.random() + 0.5, Math.random() + 0.5, Math.random(), dist + 1);
         let randomIndex =  Math.floor(Math.random() * prototypeWalls.length);
         wall.setAttribute('labyrinth-material', {
           color: `hsl(${Math.round(Math.random() * 360)}, ${Math.round(Math.random() * 60)}%, ${Math.round(Math.random() * 50)}%)`

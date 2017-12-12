@@ -67,17 +67,17 @@ let gameStateSystem = AFRAME.registerSystem('game-state', {
     // makeDistortionCurve via https://developer.mozilla.org/en-US/docs/Web/API/WaveShaperNode#Example
     function makeDistortionCurve(amount) {
       var k = typeof amount === 'number' ? amount : 50,
-      n_samples = 44100,
-      curve = new Float32Array(n_samples),
-      deg = Math.PI / 180,
-      i = 0,
-      x;
+        n_samples = 44100,
+        curve = new Float32Array(n_samples),
+        deg = Math.PI / 180,
+        i = 0,
+        x;
       for ( ; i < n_samples; ++i ) {
         x = i * 2 / n_samples - 1;
         curve[i] = ( 3 + k ) * x * 20 * deg / ( Math.PI + k * Math.abs(x) );
       }
       return curve;
-    };
+    }
 
     
     this.distortion.curve = makeDistortionCurve(400);
@@ -89,7 +89,7 @@ let gameStateSystem = AFRAME.registerSystem('game-state', {
     
     
     this.magicLight.addEventListener('raycaster-intersection', (e) => {
-      if(this.magicLight.components['magic-light'].triggerPressed) {
+      if (this.magicLight.components['magic-light'].triggerPressed) {
         // add acceleration of intersected stone towards magic light
         let stone = e.detail.els[0];
         let magicLightPos = this.magicLight.object3D.position.clone();
@@ -104,7 +104,7 @@ let gameStateSystem = AFRAME.registerSystem('game-state', {
   tick: function (time, timeDelta) {
     this.lastFinish += timeDelta;
     this.time = time;
-    if(this.magicLight.components['magic-light'].triggerPressed) {
+    if (this.magicLight.components['magic-light'].triggerPressed) {
       this.energy-=8;
     }
     
@@ -113,7 +113,7 @@ let gameStateSystem = AFRAME.registerSystem('game-state', {
     let baseFreq = 100;
 
     this.gainNode.gain.value =  0.00;
-    if(this.stoneCollectTime !== undefined && time - this.stoneCollectTime < 2500) {
+    if (this.stoneCollectTime !== undefined && time - this.stoneCollectTime < 2500) {
       this.oscillator.frequency.value = r*baseFreq + ((Math.sin((time - this.stoneCollectTime) * 0.0005)) * baseFreq);
       this.gainNode.gain.value =  0.05;
     }
@@ -126,28 +126,28 @@ let gameStateSystem = AFRAME.registerSystem('game-state', {
     this.energy-=5;
     for (var i = this.lostStones.length-1; i >= 0; i--) {
       let lostStone = this.lostStones[i];
-      if(this.magicLight.object3D.position.distanceTo(lostStone.object3D.position) < 0.1) {
+      if (this.magicLight.object3D.position.distanceTo(lostStone.object3D.position) < 0.1) {
         this.lostStones.splice(i, 1);
         lostStone.parentNode.removeChild(lostStone);
         this.energy = STARTENERGY;
         this.energyLowCondition = false;
         
         this.stoneCollectTime = this.time;
-        if(this.lostStones.length !== 0) speak(`${this.lostStones.length} stones remaining.`);
+        if (this.lostStones.length !== 0) speak(`${this.lostStones.length} stones remaining.`);
       }
     }
     
-    if(!this.energyLowCondition && this.energy < STARTENERGY * 0.2) {
+    if (!this.energyLowCondition && this.energy < STARTENERGY * 0.2) {
       speak('Energy is low.');
       this.energyLowCondition = true;
     }
 
-    if(this.energy <= 0 && this.lostGame === false) {
+    if (this.energy <= 0 && this.lostGame === false) {
       this.lostGame = true;
       this.endGame();
       return;
     }
-    if(this.lastFinish > 5000 && this.lostStones.length === 0) {
+    if (this.lastFinish > 5000 && this.lostStones.length === 0) {
       speak('You have found the lost stone. Next Level!');
       this.nextLevel();
     }
@@ -159,7 +159,7 @@ let gameStateSystem = AFRAME.registerSystem('game-state', {
     this.lastFinish = 0;
     this.stoneCollectTime = undefined;
     
-    if(!this.lostGame) {
+    if (!this.lostGame) {
       this.data.level++;
       this.levelEntity.setAttribute('level', {difficulty: this.data.level});
     } else {

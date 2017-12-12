@@ -27,7 +27,7 @@
     "browser-sync": "^2.18.13",
     "concurrently": "^3.5.0",
     "rollup": "^0.48.2",
-    "uglify-es": "^3.0.28",
+    "uglify-es": "^3.2.2",
     "watch": "^1.0.2"
   }
 }

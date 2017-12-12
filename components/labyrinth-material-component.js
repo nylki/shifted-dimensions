@@ -118,7 +118,7 @@ let labyrinthMaterial = AFRAME.registerComponent('labyrinth-material', {
     let triggerPressed = this.gameState.magicLight.components['magic-light'].triggerPressed;
     this.material.uniforms.u_controllerActive.value = triggerPressed;
     this.material.transparent = true;
-    if(triggerPressed) {
+    if (triggerPressed) {
       this.material.transparent = true;
       this.material.uniforms.u_triggerDuration.value = this.gameState.time - this.gameState.magicLight.components['magic-light'].triggerTime;
     }

@@ -90,7 +90,7 @@ let lostStoneMaterial = AFRAME.registerComponent('lost-stone-material', {
         u_controllerLookDir: {value: this.gameState.magicLight.object3D.getWorldDirection()},
         u_controllerActive: {value: this.gameState.magicLight.triggerPressed},
         u_triggerDuration: {value: this.gameState.time - this.gameState.magicLight.triggerTime},
-        u_velocity: {value: new THREE.Vector3(0,0,0)}
+        u_velocity: {value: new THREE.Vector3(0, 0, 0)}
 
       },
       vertexShader,
@@ -119,7 +119,7 @@ let lostStoneMaterial = AFRAME.registerComponent('lost-stone-material', {
     this.material.uniforms.u_controllerLookDir.value = this.gameState.magicLight.object3D.getWorldDirection();
     let triggerPressed = this.gameState.magicLight.components['magic-light'].triggerPressed;
     this.material.uniforms.u_controllerActive.value = triggerPressed;
-    if(triggerPressed) {
+    if (triggerPressed) {
       this.material.uniforms.u_triggerDuration.value = this.gameState.time - this.gameState.magicLight.triggerTime;
     }
   

@@ -6,7 +6,7 @@ let magicLight = AFRAME.registerComponent('magic-light', {
     hand: {default: ''},
     energy: {type: 'number', default: 10000},
     maxEnergy: {type: 'number', default: 12000}
-    },
+  },
     
   createModel: function () {
     // Create base
@@ -107,7 +107,7 @@ let magicLight = AFRAME.registerComponent('magic-light', {
   
   update: function (oldData) {
 
-    if(oldData.energy === this.data.energy) return;
+    if (oldData.energy === this.data.energy) return;
     this.data.energy = Math.max(this.data.energy, 0);
 
     const energy = this.data.energy;
